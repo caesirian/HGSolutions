@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hernán Garbarino - Soluciones Administrativas y de Gestión</title>
+    <title>Hernán Garbarino - Soluciones Administrativas</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -34,7 +34,6 @@
             padding: 0 15px;
         }
         
-        /* Header */
         header {
             background-color: var(--primary);
             color: white;
@@ -75,7 +74,6 @@
             color: var(--secondary);
         }
         
-        /* Hero Section */
         .hero {
             background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.9)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
@@ -105,13 +103,22 @@
             text-decoration: none;
             font-weight: bold;
             transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
         }
         
         .btn:hover {
             background-color: #2980b9;
         }
         
-        /* Sections */
+        .btn-whatsapp {
+            background-color: #25D366;
+        }
+        
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+        }
+        
         section {
             padding: 4rem 0;
         }
@@ -132,139 +139,6 @@
             margin: 10px auto;
         }
         
-        /* About */
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: center;
-        }
-        
-        .about-text h3 {
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .highlight {
-            background-color: rgba(52, 152, 219, 0.1);
-            padding: 1.5rem;
-            border-radius: 4px;
-            margin: 1.5rem 0;
-            border-left: 4px solid var(--secondary);
-        }
-        
-        /* Services */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .service-card {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 4px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .service-card h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-        
-        .service-card i {
-            font-size: 2rem;
-            color: var(--secondary);
-            margin-bottom: 1rem;
-        }
-        
-        /* Philosophy */
-        .philosophy {
-            background-color: var(--light);
-        }
-        
-        .philosophy-content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        
-        .philosophy-content p {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Experience */
-        .timeline {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .timeline:before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background-color: var(--secondary);
-            transform: translateX(-50%);
-        }
-        
-        .timeline-item {
-            margin-bottom: 2rem;
-            position: relative;
-            width: 50%;
-            padding-right: 30px;
-        }
-        
-        .timeline-item:nth-child(even) {
-            margin-left: 50%;
-            padding-right: 0;
-            padding-left: 30px;
-        }
-        
-        .timeline-content {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 4px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        }
-        
-        .timeline-content h3 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .timeline-content .date {
-            color: var(--gray);
-            font-style: italic;
-            margin-bottom: 0.5rem;
-        }
-        
-        .timeline-item:before {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: var(--secondary);
-            top: 20px;
-            right: -8px;
-        }
-        
-        .timeline-item:nth-child(even):before {
-            right: auto;
-            left: -8px;
-        }
-        
-        /* Contact */
         .contact-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -290,27 +164,58 @@
         }
         
         .contact-form input,
-        .contact-form textarea {
+        .contact-form textarea,
+        .contact-form select {
             width: 100%;
             padding: 0.8rem;
             margin-bottom: 1rem;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 1rem;
         }
         
         .contact-form textarea {
             height: 150px;
+            resize: vertical;
         }
         
-        /* Footer */
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
+        .form-group {
+            margin-bottom: 1rem;
         }
         
-        /* Responsive */
+        .form-message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .form-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .form-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .whatsapp-direct {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #25D366;
+        }
+        
+        .whatsapp-direct p {
+            margin-bottom: 0.5rem;
+        }
+        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -322,33 +227,8 @@
                 justify-content: center;
             }
             
-            .about-content,
             .contact-content {
                 grid-template-columns: 1fr;
-            }
-            
-            .timeline:before {
-                left: 30px;
-            }
-            
-            .timeline-item {
-                width: 100%;
-                padding-right: 0;
-                padding-left: 50px;
-            }
-            
-            .timeline-item:nth-child(even) {
-                margin-left: 0;
-                padding-left: 50px;
-            }
-            
-            .timeline-item:before {
-                left: 22px;
-                right: auto;
-            }
-            
-            .timeline-item:nth-child(even):before {
-                left: 22px;
             }
         }
     </style>
@@ -377,100 +257,8 @@
     <section class="hero" id="inicio">
         <div class="container">
             <h1>Soluciones Administrativas y de Gestión</h1>
-            <p>Con más de 18 años de experiencia en administración, finanzas y gestión de procesos, ofrezco soluciones eficientes que conectan lo operativo con la estrategia.</p>
+            <p>Con más de 18 años de experiencia en administración, finanzas y gestión de procesos.</p>
             <a href="#contacto" class="btn">Contactar</a>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="sobre-mi">
-        <div class="container">
-            <h2>Sobre Mí</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <h3>Hernán Emiliano Garbarino</h3>
-                    <p>Profesional con más de 18 años de experiencia en administración, finanzas y gestión de procesos. Técnico Superior en Administración de Recursos Humanos, con trayectoria en empresas de distintos rubros.</p>
-                    <p>Me especializo en la organización clara y eficiente de procesos, el control preventivo de errores y la comunicación profesional con proveedores y equipos internos.</p>
-                    <div class="highlight">
-                        <p>Trabajo con enfoque analítico, capacidad de priorización y una mirada integral que conecta lo operativo con la estrategia. Comprometido con la mejora continua, el orden y la claridad como pilares de una gestión sólida.</p>
-                    </div>
-                </div>
-                <div class="about-skills">
-                    <h3>Competencias</h3>
-                    <ul>
-                        <li>Orientación a los resultados: Alto</li>
-                        <li>Comunicación Organizacional: Alto</li>
-                        <li>Resolución de problemas: Alto</li>
-                        <li>Trabajo en equipo: Alto</li>
-                        <li>Atención al cliente interno y externo: Alto</li>
-                        <li>Idiomas: Inglés Bilingüe</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="servicios">
-        <div class="container">
-            <h2>Servicios</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Gestión Administrativa</h3>
-                    <p>Administración de circuitos administrativos, pagos, rendiciones, conciliaciones y documentación contable. Control y gestión de órdenes de trabajo y tareas de mantenimiento.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-cogs"></i>
-                    <h3>Automatización de Procesos</h3>
-                    <p>Diseño e implementación de soluciones que automatizan tareas repetitivas, reduciendo errores y aumentando la eficiencia operativa en áreas administrativas y financieras.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-search-dollar"></i>
-                    <h3>Control Financiero</h3>
-                    <p>Gestión y control de rendiciones de gastos, administración de tarjetas corporativas, arqueos de fondos fijos, control de viáticos y elaboración de reportes financieros.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-tools"></i>
-                    <h3>Soluciones y Asistencia</h3>
-                    <p>Asesoramiento profesional para la mejora continua de procesos, implementación de herramientas de gestión y soporte a la toma de decisiones estratégicas.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Philosophy Section -->
-    <section class="philosophy">
-        <div class="container">
-            <div class="philosophy-content">
-                <h2>Mi Filosofía de Trabajo</h2>
-                <p>Una de mis principales exigencias es que mis clientes o empleadores estén abiertos a recibir propuestas de mejora. Considero fundamental que exista disposición al cambio y a la evolución de los procesos.</p>
-                <p>Incluso con todas las herramientas y soluciones que puedo brindar, si continúan arrastrándose errores y se sigue trabajando de la misma manera, no será posible mejorar y avanzar.</p>
-                <p>Mi valor agregado no solo está en implementar soluciones, sino en identificar oportunidades de mejora y proponer cambios que generen un impacto positivo duradero en la organización.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experiencia">
-        <div class="container">
-            <h2>Experiencia Profesional</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3>Administrativo Senior</h3>
-                        <div class="date">ARSAT | Abril 2019 - Agosto 2024</div>
-                        <p>Gestión y control de rendiciones de gastos de Grupos Operativos. Supervisión de circuitos de reintegro y validación documental de gastos operativos. Administración de tarjetas recargables corporativas.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3>Analista Administrativo</h3>
-                        <div class="date">ARSAT | Agosto 2006 - Abril 2019</div>
-                        <p>Administración de procesos de facturación de servicios satelitales y gestión de cobranzas. Ejecución del alta y mantenimiento de proveedores. Contabilización de facturas y elaboración de órdenes de pago.</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -481,7 +269,7 @@
             <div class="contact-content">
                 <div class="contact-info">
                     <h3>Pongámonos en contacto</h3>
-                    <p>Estoy disponible para discutir cómo puedo aportar valor a su organización con soluciones eficientes, orden financiero y soporte a la toma de decisiones.</p>
+                    <p>Estoy disponible para discutir cómo puedo aportar valor a su organización.</p>
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
                         <span>hernan.garbarino@gmail.com</span>
@@ -501,23 +289,45 @@
                 </div>
                 <div class="contact-form">
                     <form id="contactForm">
-                        <input type="text" placeholder="Nombre" required>
-                        <input type="email" placeholder="Email" required>
-                        <input type="text" placeholder="Asunto" required>
-                        <textarea placeholder="Mensaje" required></textarea>
-                        <button type="submit" class="btn">Enviar Mensaje</button>
+                        <div class="form-group">
+                            <input type="text" id="nombre" name="nombre" placeholder="Nombre completo" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="whatsapp" name="whatsapp" placeholder="Número de WhatsApp">
+                        </div>
+                        <div class="form-group">
+                            <select id="consulta" name="consulta" required>
+                                <option value="" disabled selected>Tipo de consulta</option>
+                                <option value="servicios">Servicios Profesionales</option>
+                                <option value="colaboracion">Posibilidad de Colaboración</option>
+                                <option value="empleo">Oportunidad de Empleo</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="mensaje" name="mensaje" placeholder="Mensaje" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                        </button>
                     </form>
+                    <div id="formMessage" class="form-message"></div>
+                    
+                    <!-- Sección de WhatsApp Directo -->
+                    <div class="whatsapp-direct">
+                        <h4>¿Problemas con el envío?</h4>
+                        <p>Si el formulario no funciona, puedes contactarme directamente por WhatsApp:</p>
+                        <a id="directWhatsapp" href="#" class="btn btn-whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Abrir WhatsApp Directo
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 Hernán Emiliano Garbarino. Todos los derechos reservados.</p>
-        </div>
-    </footer>
 
     <script>
         // Smooth scrolling for navigation links
@@ -535,12 +345,93 @@
             });
         });
         
-        // Simple form submission handling
+        // Función para actualizar el enlace directo de WhatsApp
+        function updateDirectWhatsappLink() {
+            const nombre = document.getElementById('nombre').value || '[Nombre no proporcionado]';
+            const email = document.getElementById('email').value || '[Email no proporcionado]';
+            const whatsapp = document.getElementById('whatsapp').value || '[WhatsApp no proporcionado]';
+            const consulta = document.getElementById('consulta').value || '[Tipo de consulta no especificado]';
+            const mensaje = document.getElementById('mensaje').value || '[Mensaje no proporcionado]';
+            
+            const mensajeCompleto = `Hola Hernán, soy ${nombre}.%0A%0AMi email: ${email}%0AMi WhatsApp: ${whatsapp}%0ATipo de consulta: ${consulta}%0A%0AMensaje:%0A${mensaje}`;
+            
+            const directLink = document.getElementById('directWhatsapp');
+            directLink.href = `https://wa.me/5491134796562?text=${encodeURIComponent(mensajeCompleto)}`;
+        }
+        
+        // Actualizar el enlace cuando cambien los campos
+        document.getElementById('nombre').addEventListener('input', updateDirectWhatsappLink);
+        document.getElementById('email').addEventListener('input', updateDirectWhatsappLink);
+        document.getElementById('whatsapp').addEventListener('input', updateDirectWhatsappLink);
+        document.getElementById('consulta').addEventListener('change', updateDirectWhatsappLink);
+        document.getElementById('mensaje').addEventListener('input', updateDirectWhatsappLink);
+        
+        // WhatsApp integration with CallMeBot API (método alternativo)
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Gracias por su mensaje. Me pondré en contacto con usted pronto.');
-            this.reset();
+            
+            // Get form values
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const whatsappNum = document.getElementById('whatsapp').value;
+            const consulta = document.getElementById('consulta').value;
+            const mensaje = document.getElementById('mensaje').value;
+            
+            // Format the message for WhatsApp
+            const whatsappMessage = `Una persona llamada ${nombre} quiere contactarse con vos.%0A%0AMail: ${email}%0AWhatsApp: ${whatsappNum || 'No proporcionado'}%0ATipo de consulta: ${consulta}%0A%0AMensaje:%0A${mensaje}`;
+            
+            // Método 1: Intentar con CallMeBot API
+            const phone = '5491134796562';
+            const apikey = '1865611';
+            const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${whatsappMessage}&apikey=${apikey}`;
+            
+            // Método 2: Enlace directo de WhatsApp (más confiable)
+            const directWhatsappUrl = `https://wa.me/${phone}?text=${whatsappMessage}`;
+            
+            // Show loading state
+            const submitButton = document.querySelector('#contactForm button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            submitButton.disabled = true;
+            
+            // Primero intentamos con CallMeBot
+            fetch(apiUrl)
+                .then(response => {
+                    if (response.ok) {
+                        // Éxito con CallMeBot
+                        document.getElementById('formMessage').className = 'form-message success';
+                        document.getElementById('formMessage').textContent = '¡Mensaje enviado correctamente! Me pondré en contacto contigo pronto.';
+                        document.getElementById('contactForm').reset();
+                    } else {
+                        // Si CallMeBot falla, abrimos WhatsApp directamente
+                        throw new Error('CallMeBot no respondió');
+                    }
+                })
+                .catch(error => {
+                    console.log('CallMeBot falló, usando método directo:', error);
+                    // Abrir WhatsApp en una nueva pestaña
+                    window.open(directWhatsappUrl, '_blank');
+                    
+                    document.getElementById('formMessage').className = 'form-message success';
+                    document.getElementById('formMessage').textContent = '¡Redirigiendo a WhatsApp! Por favor, envía el mensaje desde allí.';
+                    
+                    // Reset form después de un breve delay
+                    setTimeout(() => {
+                        document.getElementById('contactForm').reset();
+                    }, 3000);
+                })
+                .finally(() => {
+                    // Restore button state
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                    
+                    // Scroll to message
+                    document.getElementById('formMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
         });
+        
+        // Inicializar el enlace directo
+        updateDirectWhatsappLink();
     </script>
 </body>
 </html>
