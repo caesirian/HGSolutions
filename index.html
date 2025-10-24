@@ -204,27 +204,16 @@
             display: block;
         }
         
-        .api-status {
-            margin-top: 1rem;
-            padding: 0.8rem;
+        .whatsapp-direct {
+            margin-top: 1.5rem;
+            padding: 1rem;
             background-color: #f8f9fa;
             border-radius: 4px;
-            font-size: 0.9rem;
-            display: none;
+            border-left: 4px solid #25D366;
         }
         
-        .api-status.show {
-            display: block;
-        }
-        
-        .status-success {
-            border-left: 4px solid #28a745;
-            background-color: #f0fff4;
-        }
-        
-        .status-error {
-            border-left: 4px solid #dc3545;
-            background-color: #fff5f5;
+        .whatsapp-direct p {
+            margin-bottom: 0.5rem;
         }
         
         @media (max-width: 768px) {
@@ -326,7 +315,15 @@
                         </button>
                     </form>
                     <div id="formMessage" class="form-message"></div>
-                    <div id="apiStatus" class="api-status"></div>
+                    
+                    <!-- Sección de WhatsApp Directo -->
+                    <div class="whatsapp-direct">
+                        <h4>¿Problemas con el envío?</h4>
+                        <p>Si el formulario no funciona, puedes contactarme directamente por WhatsApp:</p>
+                        <a id="directWhatsapp" href="#" class="btn btn-whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Abrir WhatsApp Directo
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -348,7 +345,28 @@
             });
         });
         
-        // WhatsApp integration with direct GET request to CallMeBot API
+        // Función para actualizar el enlace directo de WhatsApp
+        function updateDirectWhatsappLink() {
+            const nombre = document.getElementById('nombre').value || '[Nombre no proporcionado]';
+            const email = document.getElementById('email').value || '[Email no proporcionado]';
+            const whatsapp = document.getElementById('whatsapp').value || '[WhatsApp no proporcionado]';
+            const consulta = document.getElementById('consulta').value || '[Tipo de consulta no especificado]';
+            const mensaje = document.getElementById('mensaje').value || '[Mensaje no proporcionado]';
+            
+            const mensajeCompleto = `Hola Hernán, soy ${nombre}.%0A%0AMi email: ${email}%0AMi WhatsApp: ${whatsapp}%0ATipo de consulta: ${consulta}%0A%0AMensaje:%0A${mensaje}`;
+            
+            const directLink = document.getElementById('directWhatsapp');
+            directLink.href = `https://wa.me/5491134796562?text=${encodeURIComponent(mensajeCompleto)}`;
+        }
+        
+        // Actualizar el enlace cuando cambien los campos
+        document.getElementById('nombre').addEventListener('input', updateDirectWhatsappLink);
+        document.getElementById('email').addEventListener('input', updateDirectWhatsappLink);
+        document.getElementById('whatsapp').addEventListener('input', updateDirectWhatsappLink);
+        document.getElementById('consulta').addEventListener('change', updateDirectWhatsappLink);
+        document.getElementById('mensaje').addEventListener('input', updateDirectWhatsappLink);
+        
+        // WhatsApp integration with CallMeBot API (método alternativo)
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -359,14 +377,16 @@
             const consulta = document.getElementById('consulta').value;
             const mensaje = document.getElementById('mensaje').value;
             
-            // Format the message exactly as requested
-            const textoMensaje = `una persona llamada ${nombre} quiere contactarse con vos. Mail: ${email} Whatsapp: ${whatsappNum || 'No proporcionado'}`;
+            // Format the message for WhatsApp
+            const whatsappMessage = `Una persona llamada ${nombre} quiere contactarse con vos.%0A%0AMail: ${email}%0AWhatsApp: ${whatsappNum || 'No proporcionado'}%0ATipo de consulta: ${consulta}%0A%0AMensaje:%0A${mensaje}`;
             
-            // Encode the message for URL
-            const textoCodificado = encodeURIComponent(textoMensaje);
+            // Método 1: Intentar con CallMeBot API
+            const phone = '5491134796562';
+            const apikey = '1865611';
+            const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${whatsappMessage}&apikey=${apikey}`;
             
-            // Create the API URL with GET parameters
-            const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=5491134796562&text=${textoCodificado}&apikey=1865611`;
+            // Método 2: Enlace directo de WhatsApp (más confiable)
+            const directWhatsappUrl = `https://wa.me/${phone}?text=${whatsappMessage}`;
             
             // Show loading state
             const submitButton = document.querySelector('#contactForm button[type="submit"]');
@@ -374,58 +394,44 @@
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             submitButton.disabled = true;
             
-            // Clear previous messages
-            document.getElementById('formMessage').className = 'form-message';
-            document.getElementById('formMessage').textContent = '';
-            document.getElementById('apiStatus').className = 'api-status';
-            document.getElementById('apiStatus').textContent = '';
-            
-            // Execute the GET request using fetch
+            // Primero intentamos con CallMeBot
             fetch(apiUrl)
                 .then(response => {
                     if (response.ok) {
-                        // Success - show confirmation
+                        // Éxito con CallMeBot
                         document.getElementById('formMessage').className = 'form-message success';
                         document.getElementById('formMessage').textContent = '¡Mensaje enviado correctamente! Me pondré en contacto contigo pronto.';
-                        
-                        // Show API status
-                        document.getElementById('apiStatus').className = 'api-status show status-success';
-                        document.getElementById('apiStatus').innerHTML = `
-                            <strong>API CallMeBot ejecutada:</strong><br>
-                            <code>${apiUrl}</code><br>
-                            <small>Respuesta: ${response.status} ${response.statusText}</small>
-                        `;
-                        
-                        // Reset form
                         document.getElementById('contactForm').reset();
                     } else {
-                        throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                        // Si CallMeBot falla, abrimos WhatsApp directamente
+                        throw new Error('CallMeBot no respondió');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('CallMeBot falló, usando método directo:', error);
+                    // Abrir WhatsApp en una nueva pestaña
+                    window.open(directWhatsappUrl, '_blank');
                     
-                    // Show error message
-                    document.getElementById('formMessage').className = 'form-message error';
-                    document.getElementById('formMessage').textContent = 'Error al enviar el mensaje a través de la API.';
+                    document.getElementById('formMessage').className = 'form-message success';
+                    document.getElementById('formMessage').textContent = '¡Redirigiendo a WhatsApp! Por favor, envía el mensaje desde allí.';
                     
-                    // Show API status with error
-                    document.getElementById('apiStatus').className = 'api-status show status-error';
-                    document.getElementById('apiStatus').innerHTML = `
-                        <strong>Error en API CallMeBot:</strong><br>
-                        <code>${apiUrl}</code><br>
-                        <small>Detalles: ${error.message}</small>
-                    `;
+                    // Reset form después de un breve delay
+                    setTimeout(() => {
+                        document.getElementById('contactForm').reset();
+                    }, 3000);
                 })
                 .finally(() => {
                     // Restore button state
                     submitButton.innerHTML = originalText;
                     submitButton.disabled = false;
                     
-                    // Scroll to messages
+                    // Scroll to message
                     document.getElementById('formMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 });
         });
+        
+        // Inicializar el enlace directo
+        updateDirectWhatsappLink();
     </script>
 </body>
 </html>
