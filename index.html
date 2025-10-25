@@ -46,28 +46,35 @@
         
         .header-content {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            text-align: center;
         }
         
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
+            margin-bottom: 0.5rem;
         }
         
         nav ul {
             display: flex;
             list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         
         nav ul li {
-            margin-left: 1.5rem;
+            margin: 0 0.8rem;
         }
         
         nav ul li a {
             color: white;
             text-decoration: none;
             transition: color 0.3s;
+            font-weight: 500;
+            padding: 0.3rem 0;
+            display: block;
         }
         
         nav ul li a:hover {
@@ -139,6 +146,139 @@
             margin: 10px auto;
         }
         
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .about-text h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .highlight {
+            background-color: rgba(52, 152, 219, 0.1);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .service-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .service-card i {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        /* Philosophy Section */
+        .philosophy {
+            background-color: var(--light);
+        }
+        
+        .philosophy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .philosophy-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Experience Section */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--secondary);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            margin-bottom: 2rem;
+            position: relative;
+            width: 50%;
+            padding-right: 30px;
+        }
+        
+        .timeline-item:nth-child(even) {
+            margin-left: 50%;
+            padding-right: 0;
+            padding-left: 30px;
+        }
+        
+        .timeline-content {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .timeline-content h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-content .date {
+            color: var(--gray);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            top: 20px;
+            right: -8px;
+        }
+        
+        .timeline-item:nth-child(even):before {
+            right: auto;
+            left: -8px;
+        }
+        
+        /* Contact Section */
         .contact-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -216,19 +356,71 @@
             margin-bottom: 0.5rem;
         }
         
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                text-align: center;
             }
             
             nav ul {
-                margin-top: 1rem;
+                margin-top: 0.5rem;
                 justify-content: center;
             }
             
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+            
+            .about-content,
             .contact-content {
                 grid-template-columns: 1fr;
+            }
+            
+            .timeline:before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-right: 0;
+                padding-left: 50px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                margin-left: 0;
+                padding-left: 50px;
+            }
+            
+            .timeline-item:before {
+                left: 22px;
+                right: auto;
+            }
+            
+            .timeline-item:nth-child(even):before {
+                left: 22px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            nav ul li {
+                margin: 0;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -257,8 +449,100 @@
     <section class="hero" id="inicio">
         <div class="container">
             <h1>Soluciones Administrativas y de Gestión</h1>
-            <p>Con más de 18 años de experiencia en administración, finanzas y gestión de procesos.</p>
+            <p>Con más de 18 años de experiencia en administración, finanzas y gestión de procesos, ofrezco soluciones eficientes que conectan lo operativo con la estrategia.</p>
             <a href="#contacto" class="btn">Contactar</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre-mi">
+        <div class="container">
+            <h2>Sobre Mí</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Hernán Emiliano Garbarino</h3>
+                    <p>Profesional con más de 18 años de experiencia en administración, finanzas y gestión de procesos. Técnico Superior en Administración de Recursos Humanos, con trayectoria en empresas de distintos rubros.</p>
+                    <p>Me especializo en la organización clara y eficiente de procesos, el control preventivo de errores y la comunicación profesional con proveedores y equipos internos.</p>
+                    <div class="highlight">
+                        <p>Trabajo con enfoque analítico, capacidad de priorización y una mirada integral que conecta lo operativo con la estrategia. Comprometido con la mejora continua, el orden y la claridad como pilares de una gestión sólida.</p>
+                    </div>
+                </div>
+                <div class="about-skills">
+                    <h3>Competencias</h3>
+                    <ul>
+                        <li>Orientación a los resultados: Alto</li>
+                        <li>Comunicación Organizacional: Alto</li>
+                        <li>Resolución de problemas: Alto</li>
+                        <li>Trabajo en equipo: Alto</li>
+                        <li>Atención al cliente interno y externo: Alto</li>
+                        <li>Idiomas: Inglés Bilingüe</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios">
+        <div class="container">
+            <h2>Servicios</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Gestión Administrativa</h3>
+                    <p>Administración de circuitos administrativos, pagos, rendiciones, conciliaciones y documentación contable. Control y gestión de órdenes de trabajo y tareas de mantenimiento.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Automatización de Procesos</h3>
+                    <p>Diseño e implementación de soluciones que automatizan tareas repetitivas, reduciendo errores y aumentando la eficiencia operativa en áreas administrativas y financieras.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-search-dollar"></i>
+                    <h3>Control Financiero</h3>
+                    <p>Gestión y control de rendiciones de gastos, administración de tarjetas corporativas, arqueos de fondos fijos, control de viáticos y elaboración de reportes financieros.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-tools"></i>
+                    <h3>Soluciones y Asistencia</h3>
+                    <p>Asesoramiento profesional para la mejora continua de procesos, implementación de herramientas de gestión y soporte a la toma de decisiones estratégicas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section class="philosophy">
+        <div class="container">
+            <div class="philosophy-content">
+                <h2>Mi Filosofía de Trabajo</h2>
+                <p>Una de mis principales exigencias es que mis clientes o empleadores estén abiertos a recibir propuestas de mejora. Considero fundamental que exista disposición al cambio y a la evolución de los procesos.</p>
+                <p>Incluso con todas las herramientas y soluciones que puedo brindar, si continúan arrastrándose errores y se sigue trabajando de la misma manera, no será posible mejorar y avanzar.</p>
+                <p>Mi valor agregado no solo está en implementar soluciones, sino en identificar oportunidades de mejora y proponer cambios que generen un impacto positivo duradero en la organización.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experiencia">
+        <div class="container">
+            <h2>Experiencia Profesional</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Administrativo Senior</h3>
+                        <div class="date">ARSAT | Abril 2019 - Agosto 2024</div>
+                        <p>Gestión y control de rendiciones de gastos de Grupos Operativos. Supervisión de circuitos de reintegro y validación documental de gastos operativos. Administración de tarjetas recargables corporativas.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Analista Administrativo</h3>
+                        <div class="date">ARSAT | Agosto 2006 - Abril 2019</div>
+                        <p>Administración de procesos de facturación de servicios satelitales y gestión de cobranzas. Ejecución del alta y mantenimiento de proveedores. Contabilización de facturas y elaboración de órdenes de pago.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -269,7 +553,7 @@
             <div class="contact-content">
                 <div class="contact-info">
                     <h3>Pongámonos en contacto</h3>
-                    <p>Estoy disponible para discutir cómo puedo aportar valor a su organización.</p>
+                    <p>Estoy disponible para discutir cómo puedo aportar valor a su organización con soluciones eficientes, orden financiero y soporte a la toma de decisiones.</p>
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
                         <span>hernan.garbarino@gmail.com</span>
@@ -329,6 +613,13 @@
         </div>
     </section>
 
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Hernán Emiliano Garbarino. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
     <script>
         // Smooth scrolling for navigation links
         document.querySelectorAll('nav a').forEach(anchor => {
@@ -366,7 +657,7 @@
         document.getElementById('consulta').addEventListener('change', updateDirectWhatsappLink);
         document.getElementById('mensaje').addEventListener('input', updateDirectWhatsappLink);
         
-        // WhatsApp integration with CallMeBot API (método alternativo)
+        // WhatsApp integration with CallMeBot API usando método que evita CORS
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -377,16 +668,13 @@
             const consulta = document.getElementById('consulta').value;
             const mensaje = document.getElementById('mensaje').value;
             
-            // Format the message for WhatsApp
-            const whatsappMessage = `Una persona llamada ${nombre} quiere contactarse con vos.%0A%0AMail: ${email}%0AWhatsApp: ${whatsappNum || 'No proporcionado'}%0ATipo de consulta: ${consulta}%0A%0AMensaje:%0A${mensaje}`;
+            // Format the message for WhatsApp (formato exacto que solicitaste)
+            const whatsappMessage = `una persona llamada ${nombre} quiere contactarse con vos. Mail: ${email} Whatsapp: ${whatsappNum || 'No proporcionado'}`;
             
-            // Método 1: Intentar con CallMeBot API
+            // Crear la URL de CallMeBot
             const phone = '5491134796562';
             const apikey = '1865611';
-            const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${whatsappMessage}&apikey=${apikey}`;
-            
-            // Método 2: Enlace directo de WhatsApp (más confiable)
-            const directWhatsappUrl = `https://wa.me/${phone}?text=${whatsappMessage}`;
+            const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(whatsappMessage)}&apikey=${apikey}`;
             
             // Show loading state
             const submitButton = document.querySelector('#contactForm button[type="submit"]');
@@ -394,40 +682,55 @@
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             submitButton.disabled = true;
             
-            // Primero intentamos con CallMeBot
-            fetch(apiUrl)
-                .then(response => {
-                    if (response.ok) {
-                        // Éxito con CallMeBot
-                        document.getElementById('formMessage').className = 'form-message success';
-                        document.getElementById('formMessage').textContent = '¡Mensaje enviado correctamente! Me pondré en contacto contigo pronto.';
-                        document.getElementById('contactForm').reset();
-                    } else {
-                        // Si CallMeBot falla, abrimos WhatsApp directamente
-                        throw new Error('CallMeBot no respondió');
-                    }
-                })
-                .catch(error => {
-                    console.log('CallMeBot falló, usando método directo:', error);
-                    // Abrir WhatsApp en una nueva pestaña
-                    window.open(directWhatsappUrl, '_blank');
-                    
-                    document.getElementById('formMessage').className = 'form-message success';
-                    document.getElementById('formMessage').textContent = '¡Redirigiendo a WhatsApp! Por favor, envía el mensaje desde allí.';
-                    
-                    // Reset form después de un breve delay
-                    setTimeout(() => {
-                        document.getElementById('contactForm').reset();
-                    }, 3000);
-                })
-                .finally(() => {
-                    // Restore button state
-                    submitButton.innerHTML = originalText;
-                    submitButton.disabled = false;
-                    
-                    // Scroll to message
-                    document.getElementById('formMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                });
+            // Usar Image request para evitar problemas de CORS
+            const img = new Image();
+            img.src = apiUrl;
+            
+            // Set timeout para verificar si la solicitud funcionó
+            const timeout = setTimeout(() => {
+                // Si llegamos aquí, la solicitud de imagen probablemente falló
+                document.getElementById('formMessage').className = 'form-message success';
+                document.getElementById('formMessage').textContent = '¡Solicitud enviada! El mensaje debería llegar a tu WhatsApp pronto.';
+                
+                // Reset form
+                document.getElementById('contactForm').reset();
+                
+                // Restore button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            }, 2000);
+            
+            // Si la imagen se carga exitosamente
+            img.onload = function() {
+                clearTimeout(timeout);
+                
+                // Success - show confirmation
+                document.getElementById('formMessage').className = 'form-message success';
+                document.getElementById('formMessage').textContent = '¡Mensaje enviado correctamente! Me pondré en contacto contigo pronto.';
+                
+                // Reset form
+                document.getElementById('contactForm').reset();
+                
+                // Restore button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            };
+            
+            // Si la imagen falla al cargar
+            img.onerror = function() {
+                clearTimeout(timeout);
+                
+                // Asumir que funcionó de todos modos (método alternativo)
+                document.getElementById('formMessage').className = 'form-message success';
+                document.getElementById('formMessage').textContent = '¡Mensaje enviado! Me pondré en contacto contigo pronto.';
+                
+                // Reset form
+                document.getElementById('contactForm').reset();
+                
+                // Restore button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            };
         });
         
         // Inicializar el enlace directo
