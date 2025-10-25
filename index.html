@@ -805,15 +805,27 @@
             });
         });
         
-        // Función para actualizar el enlace directo de WhatsApp
+        // Función para actualizar el enlace directo de WhatsApp con formato mejorado
         function updateDirectWhatsappLink() {
-            const nombre = document.getElementById('nombre').value || '[Nombre no proporcionado]';
-            const email = document.getElementById('email').value || '[Email no proporcionado]';
-            const whatsapp = document.getElementById('whatsapp').value || '[WhatsApp no proporcionado]';
-            const consulta = document.getElementById('consulta').value || '[Tipo de consulta no especificado]';
-            const mensaje = document.getElementById('mensaje').value || '[Mensaje no proporcionado]';
+            const nombre = document.getElementById('nombre').value || 'No proporcionado';
+            const email = document.getElementById('email').value || 'No proporcionado';
+            const whatsapp = document.getElementById('whatsapp').value || 'No proporcionado';
+            const consulta = document.getElementById('consulta').value || 'No especificado';
+            const mensaje = document.getElementById('mensaje').value || 'No proporcionado';
             
-            const mensajeCompleto = `Hola Hernán, soy ${nombre}.%0A%0AMi email: ${email}%0AMi WhatsApp: ${whatsapp}%0ATipo de consulta: ${consulta}%0A%0AMensaje:%0A${mensaje}`;
+            // Formato mejorado del mensaje para WhatsApp
+            const mensajeCompleto = `¡Hola Hernán! Te contacto desde tu sitio web.
+
+📋 **Información de contacto:**
+• Nombre: ${nombre}
+• Email: ${email}
+• WhatsApp: ${whatsapp}
+• Tipo de consulta: ${consulta}
+
+💬 **Mensaje:**
+${mensaje}
+
+Espero tu respuesta. ¡Gracias!`;
             
             const directLink = document.getElementById('directWhatsapp');
             directLink.href = `https://wa.me/5491134796562?text=${encodeURIComponent(mensajeCompleto)}`;
