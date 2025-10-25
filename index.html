@@ -37,7 +37,7 @@
         header {
             background-color: var(--primary);
             color: white;
-            padding: 0.7rem 0;
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -53,7 +53,6 @@
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            white-space: nowrap;
         }
         
         nav ul {
@@ -62,7 +61,7 @@
         }
         
         nav ul li {
-            margin-left: 1.2rem;
+            margin-left: 1.5rem;
         }
         
         nav ul li a {
@@ -70,8 +69,7 @@
             text-decoration: none;
             transition: color 0.3s;
             font-weight: 500;
-            font-size: 0.85rem;
-            white-space: nowrap;
+            font-size: 0.9rem;
         }
         
         nav ul li a:hover {
@@ -362,27 +360,21 @@
         }
         
         /* Responsive */
-        @media (max-width: 992px) {
+        @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 text-align: center;
             }
             
-            .logo {
-                margin-bottom: 0.5rem;
-            }
-            
             nav ul {
+                margin-top: 1rem;
                 justify-content: center;
-                flex-wrap: wrap;
             }
             
             nav ul li {
-                margin: 0.3rem 0.8rem;
+                margin: 0 0.8rem;
             }
-        }
-        
-        @media (max-width: 768px) {
+            
             .about-content,
             .contact-content {
                 grid-template-columns: 1fr;
@@ -411,10 +403,6 @@
             .timeline-item:nth-child(even):before {
                 left: 22px;
             }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
         }
         
         @media (max-width: 480px) {
@@ -427,8 +415,8 @@
                 margin: 0;
             }
             
-            .logo {
-                font-size: 1.3rem;
+            .hero h1 {
+                font-size: 2rem;
             }
         }
     </style>
