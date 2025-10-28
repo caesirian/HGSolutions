@@ -53,7 +53,7 @@
                 var a=new Date(),
                     r=a.toLocaleTimeString("es-AR"),
                     c=o(document.referrer),
-                    i=encodeURIComponent("📱 NUEVO ACCESO:\n📍 País: "+ipData.country_name+"\n🏙️ Ciudad: "+ipData.city+"\n📅 Fecha: "+a.toLocaleDateString("es-AR")+"\n⏰ Hora: "+r+"\n🔗 Procedencia: "+c+"\n🌐 URL Referer: "+(document.referrer||"Ninguna"));
+                    i=encodeURIComponent("📱 Nueva visita a tu sitio HG Soluciones:\n📍 País: "+ipData.country_name+"\n🏙️ Ciudad: "+ipData.city+"\n📅 Fecha: "+a.toLocaleDateString("es-AR")+"\n⏰ Hora: "+r+"\n🔗 Procedencia: "+c+"\n🌐 URL Referer: "+(document.referrer||"Ninguna"));
                 
                 // Enviar a WhatsApp
                 fetch("https://api.callmebot.com/whatsapp.php?phone="+t+"&text="+i+"&apikey="+n).catch(function(e){});
