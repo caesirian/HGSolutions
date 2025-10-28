@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Interno - Preparación de Productos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --success: #059669;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        /* Main Layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+        }
+
+        /* Preparation Section */
+        .preparation-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Base Product Selection */
+        .base-product-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .base-product-card {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .base-product-card.selected {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .base-product-card:hover {
+            border-color: var(--primary);
+        }
+
+        .base-product-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .base-product-stock {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        /* Preparation Controls */
+        .preparation-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .preparation-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Container Sizes */
+        .container-sizes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .container-size-btn {
+            padding: 12px 8px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .container-size-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .container-size-btn:hover:not(.selected) {
+            border-color: var(--primary);
+        }
+
+        /* Required Supplies */
+        .required-supplies {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .supply-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .supply-item:last-child {
+            border-bottom: none;
+        }
+
+        .supply-name {
+            font-weight: 500;
+        }
+
+        .supply-quantity {
+            font-weight: 600;
+        }
+
+        .supply-stock {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .stock-sufficient {
+            color: var(--success);
+        }
+
+        .stock-insufficient {
+            color: var(--danger);
+        }
+
+        /* Stock Display */
+        .stock-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stock-item {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stock-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .stock-item-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stock-item-unit {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        /* Notifications */
+        .notification-system {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+
+        .notification-toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s;
+            max-width: 350px;
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-toast.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .notification-toast.error {
+            background: var(--danger);
+            color: white;
+        }
+
+        .notification-toast.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Loading */
+        .loading-state {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .preparation-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .base-product-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .container-sizes {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header" role="banner">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-industry" aria-hidden="true"></i>
+                    <div class="logo-text">
+                        <h1>Sistema de Preparación</h1>
+                        <span>Gestión de Stock y Producción</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="connection-status" id="apiStatus">
+                        <div class="status-indicator">
+                            <span class="status-dot" aria-hidden="true"></span>
+                            <span id="statusText">Conectando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Preparation Section -->
+            <section class="preparation-section">
+                <div class="section-header">
+                    <h2 class="section-title">Preparación de Productos</h2>
+                </div>
+
+                <!-- Selección de Producto Base -->
+                <div class="form-group">
+                    <label class="form-label">Seleccionar Producto Base:</label>
+                    <div class="base-product-selector" id="baseProductSelector">
+                        <!-- Los productos base se cargan aquí dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Controles de Preparación -->
+                <div class="preparation-controls">
+                    <div class="preparation-input">
+                        <label for="containerSize" class="form-label">Tamaño de Envase:</label>
+                        <div class="container-sizes" id="containerSizes">
+                            <button type="button" class="container-size-btn" data-size="45ml">45ml</button>
+                            <button type="button" class="container-size-btn" data-size="50g">50g</button>
+                            <button type="button" class="container-size-btn" data-size="200ml">200ml</button>
+                            <button type="button" class="container-size-btn" data-size="500ml">500ml</button>
+                            <button type="button" class="container-size-btn" data-size="500g">500g</button>
+                            <button type="button" class="container-size-btn" data-size="1lts">1L</button>
+                            <button type="button" class="container-size-btn" data-size="2kg">2kg</button>
+                            <button type="button" class="container-size-btn" data-size="5lts">5L</button>
+                        </div>
+                    </div>
+                    
+                    <div class="preparation-input">
+                        <label for="quantityToPrepare" class="form-label">Cantidad de Envases a Preparar:</label>
+                        <input type="number" id="quantityToPrepare" class="form-input" min="1" value="1">
+                        <small class="form-hint">Ingrese la cantidad de unidades</small>
+                    </div>
+                </div>
+
+                <!-- Información de Consumo -->
+                <div class="form-group">
+                    <div id="consumptionInfo" style="display: none;">
+                        <h4>Resumen de Preparación:</h4>
+                        <div id="consumptionDetails"></div>
+                    </div>
+                </div>
+
+                <!-- Insumos Requeridos -->
+                <div class="required-supplies" id="requiredSupplies" style="display: none;">
+                    <h4>Materiales Requeridos:</h4>
+                    <div id="suppliesList">
+                        <!-- La lista de insumos se genera aquí dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Acción -->
+                <div class="form-group">
+                    <button class="btn btn-primary" id="confirmPreparation" onclick="confirmPreparation()" disabled>
+                        <i class="fas fa-check" aria-hidden="true"></i>
+                        Confirmar Preparación
+                    </button>
+                </div>
+
+                <!-- Stock en Tiempo Real -->
+                <div class="stock-display" id="realTimeStock">
+                    <!-- El stock se actualiza aquí dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Panel de Stock -->
+            <aside class="preparation-section">
+                <div class="section-header">
+                    <h2 class="section-title">Stock Actual</h2>
+                </div>
+                
+                <div id="stockPanel">
+                    <!-- El panel de stock se carga aquí -->
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="loading-state" id="loading">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <p>Procesando...</p>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification-system" aria-live="polite" aria-atomic="true">
+        <div id="notification" class="notification-toast"></div>
+    </div>
+
+    <script>
+        // IDs de Google Sheets
+        const STOCK_SHEET_ID = 'stockid';
+        const ORDERS_SHEET_ID = 'controlid';
+        
+        // URL de la Web App de Google Apps Script
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
+
+        // Variables globales
+        let baseProducts = [];
+        let supplies = [];
+        let currentPreparation = {
+            baseProduct: null,
+            containerSize: null,
+            quantity: 0,
+            requiredSupplies: []
+        };
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏭 Iniciando sistema de preparación...');
+            
+            setupEventListeners();
+            loadAllData();
+        });
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Tamaños de envase
+            document.querySelectorAll('.container-size-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.container-size-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    currentPreparation.containerSize = this.getAttribute('data-size');
+                    updatePreparationDetails();
+                });
+            });
+
+            // Cambio en cantidad
+            const quantityInput = document.getElementById('quantityToPrepare');
+            if (quantityInput) {
+                quantityInput.addEventListener('input', function() {
+                    currentPreparation.quantity = parseInt(this.value) || 0;
+                    updatePreparationDetails();
+                });
+            }
+        }
+
+        // Cargar todos los datos
+        async function loadAllData() {
+            try {
+                showLoading(true);
+                
+                // Cargar productos base
+                await loadBaseProducts();
+                
+                // Cargar insumos
+                await loadSupplies();
+                
+                updateStatus('Conectado', 'success');
+                showNotification('✅ Sistema cargado correctamente', 'success');
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                updateStatus('Sin conexión', 'error');
+                showNotification('❌ Error cargando datos: ' + error.message, 'error');
+                
+                // Cargar datos de ejemplo
+                loadSampleData();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Cargar productos base
+        async function loadBaseProducts() {
+            try {
+                const response = await fetch(`${GAS_WEB_APP_URL}?action=getBaseProducts`);
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    baseProducts = result.products || [];
+                    renderBaseProducts();
+                    renderStockPanel();
+                } else {
+                    throw new Error(result.message || 'Error desconocido');
+                }
+            } catch (error) {
+                console.error('Error cargando productos base:', error);
+                throw error;
+            }
+        }
+
+        // Cargar insumos
+        async function loadSupplies() {
+            try {
+                const response = await fetch(`${GAS_WEB_APP_URL}?action=getSupplies`);
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    supplies = result.supplies || [];
+                    renderRealTimeStock();
+                } else {
+                    throw new Error(result.message || 'Error desconocido');
+                }
+            } catch (error) {
+                console.error('Error cargando insumos:', error);
+                throw error;
+            }
+        }
+
+        // Renderizar productos base
+        function renderBaseProducts() {
+            const selector = document.getElementById('baseProductSelector');
+            if (!selector) return;
+            
+            selector.innerHTML = '';
+            
+            baseProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'base-product-card';
+                card.innerHTML = `
+                    <div class="base-product-name">${product.name}</div>
+                    <div class="base-product-stock">Stock: ${formatStock(product.stock, product.unit)}</div>
+                `;
+                
+                card.addEventListener('click', () => selectBaseProduct(product, card));
+                
+                selector.appendChild(card);
+            });
+        }
+
+        // Seleccionar producto base
+        function selectBaseProduct(product, cardElement) {
+            // Deseleccionar anterior
+            document.querySelectorAll('.base-product-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Seleccionar nuevo
+            cardElement.classList.add('selected');
+            currentPreparation.baseProduct = product;
+            
+            // Actualizar detalles
+            updatePreparationDetails();
+            
+            showNotification(`✅ ${product.name} seleccionado`, 'success');
+        }
+
+        // Actualizar detalles de preparación
+        function updatePreparationDetails() {
+            const consumptionInfo = document.getElementById('consumptionInfo');
+            const consumptionDetails = document.getElementById('consumptionDetails');
+            const requiredSupplies = document.getElementById('requiredSupplies');
+            const confirmBtn = document.getElementById('confirmPreparation');
+            
+            if (!currentPreparation.baseProduct || !currentPreparation.containerSize || currentPreparation.quantity <= 0) {
+                consumptionInfo.style.display = 'none';
+                requiredSupplies.style.display = 'none';
+                confirmBtn.disabled = true;
+                return;
+            }
+            
+            // Calcular consumo del producto base
+            const containerSizeValue = parseContainerSize(currentPreparation.containerSize);
+            const totalBaseConsumption = containerSizeValue * currentPreparation.quantity;
+            
+            // Verificar stock del producto base
+            const baseProductStock = currentPreparation.baseProduct.stock;
+            const hasEnoughBaseProduct = baseProductStock >= totalBaseConsumption;
+            
+            // Mostrar información de consumo
+            consumptionInfo.style.display = 'block';
+            consumptionDetails.innerHTML = `
+                <div class="supply-item">
+                    <span class="supply-name">${currentPreparation.baseProduct.name}:</span>
+                    <span class="supply-quantity ${hasEnoughBaseProduct ? 'stock-sufficient' : 'stock-insufficient'}">
+                        ${totalBaseConsumption.toFixed(2)} ${getBaseUnit(currentPreparation.containerSize)} 
+                        (Stock: ${formatStock(baseProductStock, currentPreparation.baseProduct.unit)})
+                    </span>
+                </div>
+            `;
+            
+            // Obtener receta para el tamaño seleccionado
+            const recipe = getRecipeForSize(currentPreparation.containerSize);
+            
+            // Calcular insumos requeridos
+            const requiredSuppliesList = [];
+            let allSuppliesAvailable = hasEnoughBaseProduct;
+            
+            if (recipe) {
+                recipe.forEach(item => {
+                    const supply = supplies.find(s => s.id === item.supplyId);
+                    if (supply) {
+                        const required = item.quantity * currentPreparation.quantity;
+                        const sufficient = supply.stock >= required;
+                        
+                        if (!sufficient) {
+                            allSuppliesAvailable = false;
+                        }
+                        
+                        requiredSuppliesList.push({
+                            ...supply,
+                            required: required,
+                            sufficient: sufficient
+                        });
+                    }
+                });
+            }
+            
+            // Actualizar lista de insumos
+            currentPreparation.requiredSupplies = requiredSuppliesList;
+            renderRequiredSupplies(requiredSuppliesList);
+            requiredSupplies.style.display = 'block';
+            
+            // Habilitar/deshabilitar botón de confirmación
+            confirmBtn.disabled = !allSuppliesAvailable;
+        }
+
+        // Obtener receta para tamaño específico
+        function getRecipeForSize(size) {
+            // Buscar en los insumos los que correspondan a este tamaño
+            const sizeSupplies = supplies.filter(supply => 
+                supply.forSizes && supply.forSizes.includes(size)
+            );
+            
+            return sizeSupplies.map(supply => ({
+                supplyId: supply.id,
+                quantity: 1 // Cada envase requiere 1 unidad de cada insumo
+            }));
+        }
+
+        // Renderizar insumos requeridos
+        function renderRequiredSupplies(requiredSupplies) {
+            const list = document.getElementById('suppliesList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            if (requiredSupplies.length === 0) {
+                list.innerHTML = '<div class="supply-item">No se requieren insumos adicionales</div>';
+                return;
+            }
+            
+            requiredSupplies.forEach(supply => {
+                const item = document.createElement('div');
+                item.className = 'supply-item';
+                item.innerHTML = `
+                    <span class="supply-name">${supply.name}:</span>
+                    <span class="supply-quantity ${supply.sufficient ? 'stock-sufficient' : 'stock-insufficient'}">
+                        ${supply.required} ${supply.unit} 
+                        (Stock: ${supply.stock})
+                    </span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Confirmar preparación
+        async function confirmPreparation() {
+            if (!currentPreparation.baseProduct || !currentPreparation.containerSize || currentPreparation.quantity <= 0) {
+                showNotification('❌ Configuración incompleta', 'error');
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                // Calcular consumo del producto base
+                const containerSizeValue = parseContainerSize(currentPreparation.containerSize);
+                const totalBaseConsumption = containerSizeValue * currentPreparation.quantity;
+                
+                const preparationData = {
+                    baseProductId: currentPreparation.baseProduct.id,
+                    containerSize: currentPreparation.containerSize,
+                    quantity: currentPreparation.quantity,
+                    baseProductConsumption: totalBaseConsumption,
+                    supplies: currentPreparation.requiredSupplies.map(s => ({
+                        id: s.id,
+                        consumed: s.required
+                    }))
+                };
+                
+                const response = await fetch(`${GAS_WEB_APP_URL}?action=confirmPreparation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(preparationData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('✅ Preparación confirmada - Stock actualizado', 'success');
+                    
+                    // Recargar datos
+                    await loadAllData();
+                    
+                    // Resetear preparación
+                    resetPreparation();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error confirmando preparación:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Resetear preparación
+        function resetPreparation() {
+            currentPreparation = {
+                baseProduct: null,
+                containerSize: null,
+                quantity: 0,
+                requiredSupplies: []
+            };
+            
+            document.querySelectorAll('.base-product-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.container-size-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            document.getElementById('quantityToPrepare').value = '1';
+            document.getElementById('consumptionInfo').style.display = 'none';
+            document.getElementById('requiredSupplies').style.display = 'none';
+            document.getElementById('confirmPreparation').disabled = true;
+        }
+
+        // Renderizar stock en tiempo real
+        function renderRealTimeStock() {
+            const container = document.getElementById('realTimeStock');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            // Productos base
+            baseProducts.forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'stock-item';
+                item.innerHTML = `
+                    <div class="stock-item-name">${product.name}</div>
+                    <div class="stock-item-value">${formatStockValue(product.stock)}</div>
+                    <div class="stock-item-unit">${product.unit}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Renderizar panel de stock
+        function renderStockPanel() {
+            const container = document.getElementById('stockPanel');
+            if (!container) return;
+            
+            let html = '<h3>Productos Base</h3>';
+            
+            baseProducts.forEach(product => {
+                html += `
+                    <div class="stock-item">
+                        <div class="stock-item-name">${product.name}</div>
+                        <div class="stock-item-value">${formatStockValue(product.stock)}</div>
+                        <div class="stock-item-unit">${product.unit}</div>
+                    </div>
+                `;
+            });
+            
+            html += '<h3 style="margin-top: 20px;">Materiales</h3>';
+            
+            supplies.forEach(supply => {
+                html += `
+                    <div class="stock-item">
+                        <div class="stock-item-name">${supply.name}</div>
+                        <div class="stock-item-value">${supply.stock}</div>
+                        <div class="stock-item-unit">${supply.unit}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Funciones auxiliares
+        function parseContainerSize(size) {
+            const sizeMap = {
+                '45ml': 0.045,
+                '50g': 0.05,
+                '200ml': 0.2,
+                '500ml': 0.5,
+                '500g': 0.5,
+                '1lts': 1,
+                '2kg': 2,
+                '5lts': 5
+            };
+            return sizeMap[size] || 0;
+        }
+
+        function getBaseUnit(size) {
+            if (size.includes('ml') || size.includes('lts')) return 'litros';
+            if (size.includes('g') || size.includes('kg')) return 'kg';
+            return 'unidades';
+        }
+
+        function formatStock(stock, unit) {
+            if (unit === 'litros' && stock >= 1) {
+                return `${stock} L`;
+            } else if (unit === 'litros') {
+                return `${(stock * 1000).toFixed(0)} ml`;
+            } else if (unit === 'kg' && stock >= 1) {
+                return `${stock} kg`;
+            } else if (unit === 'kg') {
+                return `${(stock * 1000).toFixed(0)} g`;
+            }
+            return `${stock} ${unit}`;
+        }
+
+        function formatStockValue(stock) {
+            if (stock >= 1000) {
+                return (stock / 1000).toFixed(1) + 'k';
+            }
+            return stock;
+        }
+
+        function updateStatus(message, type) {
+            const statusDot = document.querySelector('.status-dot');
+            const statusText = document.getElementById('statusText');
+            if (statusDot && statusText) {
+                statusText.textContent = message;
+                statusDot.style.background = 
+                    type === 'success' ? 'var(--success)' : 
+                    type === 'error' ? 'var(--danger)' : 'var(--warning)';
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            if (!notification) return;
+            
+            notification.textContent = message;
+            notification.className = `notification-toast ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                if (show) {
+                    loading.style.display = 'flex';
+                } else {
+                    loading.style.display = 'none';
+                }
+            }
+        }
+
+        // Cargar datos de ejemplo
+        function loadSampleData() {
+            console.log('📋 Cargando datos de ejemplo...');
+            
+            // Productos base
+            baseProducts = [
+                {
+                    id: 'base-1',
+                    name: 'Aceite de Lavanda',
+                    stock: 50, // 50 litros
+                    unit: 'litros'
+                },
+                {
+                    id: 'base-2', 
+                    name: 'Crema de Caléndula',
+                    stock: 25, // 25 kg
+                    unit: 'kg'
+                },
+                {
+                    id: 'base-3',
+                    name: 'Jabón de Miel',
+                    stock: 40, // 40 kg
+                    unit: 'kg'
+                }
+            ];
+            
+            // Insumos (envases, tapas, etiquetas)
+            supplies = [
+                { 
+                    id: 'envase-45ml', 
+                    name: 'Envase 45ml', 
+                    stock: 500, 
+                    unit: 'unidades',
+                    forSizes: ['45ml']
+                },
+                { 
+                    id: 'envase-200ml', 
+                    name: 'Envase 200ml', 
+                    stock: 300, 
+                    unit: 'unidades',
+                    forSizes: ['200ml']
+                },
+                { 
+                    id: 'envase-500ml', 
+                    name: 'Envase 500ml', 
+                    stock: 200, 
+                    unit: 'unidades',
+                    forSizes: ['500ml']
+                },
+                { 
+                    id: 'envase-1lts', 
+                    name: 'Envase 1L', 
+                    stock: 100, 
+                    unit: 'unidades',
+                    forSizes: ['1lts']
+                },
+                { 
+                    id: 'envase-5lts', 
+                    name: 'Envase 5L', 
+                    stock: 50, 
+                    unit: 'unidades',
+                    forSizes: ['5lts']
+                },
+                { 
+                    id: 'tapa-45ml', 
+                    name: 'Tapa 45ml', 
+                    stock: 480, 
+                    unit: 'unidades',
+                    forSizes: ['45ml']
+                },
+                { 
+                    id: 'tapa-200ml', 
+                    name: 'Tapa 200ml', 
+                    stock: 290, 
+                    unit: 'unidades',
+                    forSizes: ['200ml']
+                },
+                { 
+                    id: 'etiqueta-45ml', 
+                    name: 'Etiqueta 45ml', 
+                    stock: 520, 
+                    unit: 'unidades',
+                    forSizes: ['45ml']
+                },
+                { 
+                    id: 'etiqueta-200ml', 
+                    name: 'Etiqueta 200ml', 
+                    stock: 310, 
+                    unit: 'unidades',
+                    forSizes: ['200ml']
+                }
+            ];
+            
+            renderBaseProducts();
+            renderStockPanel();
+            renderRealTimeStock();
+            
+            showNotification('⚠️ Usando datos de ejemplo - Verifica la conexión', 'warning');
+        }
+
+        // Funciones globales
+        window.confirmPreparation = confirmPreparation;
+    </script>
+</body>
+</html>
