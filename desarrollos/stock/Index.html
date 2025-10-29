@@ -626,10 +626,16 @@
             try {
                 console.log('🔍 Probando conexión con GAS...');
                 
-                const testUrl = `${GAS_WEB_APP_URL}?action=testConnection`;
+                // Usar fetch con modo 'no-cors' para evitar problemas CORS
+                const testUrl = `${GAS_WEB_APP_URL}?action=testConnection&timestamp=${Date.now()}`;
                 console.log('URL de prueba:', testUrl);
                 
-                const response = await fetch(testUrl);
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                
                 console.log('Respuesta HTTP:', response.status, response.statusText);
                 
                 if (!response.ok) {
@@ -688,7 +694,14 @@
         // Función mejorada para cargar productos base
         async function loadBaseProducts() {
             try {
-                const response = await fetch(`${GAS_WEB_APP_URL}?action=getBaseProducts`);
+                const url = `${GAS_WEB_APP_URL}?action=getBaseProducts&timestamp=${Date.now()}`;
+                console.log('Cargando productos desde:', url);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
                 
                 if (!response.ok) {
                     throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
@@ -713,7 +726,14 @@
         // Función mejorada para cargar insumos
         async function loadSupplies() {
             try {
-                const response = await fetch(`${GAS_WEB_APP_URL}?action=getSupplies`);
+                const url = `${GAS_WEB_APP_URL}?action=getSupplies&timestamp=${Date.now()}`;
+                console.log('Cargando insumos desde:', url);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
                 
                 if (!response.ok) {
                     throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
@@ -740,6 +760,11 @@
             if (!selector) return;
             
             selector.innerHTML = '';
+            
+            if (baseProducts.length === 0) {
+                selector.innerHTML = '<div class="base-product-card">No hay productos disponibles</div>';
+                return;
+            }
             
             baseProducts.forEach(product => {
                 const card = document.createElement('div');
@@ -913,6 +938,7 @@
                 
                 const response = await fetch(`${GAS_WEB_APP_URL}?action=confirmPreparation`, {
                     method: 'POST',
+                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -995,27 +1021,35 @@
             
             let html = '<h3>Productos Base</h3>';
             
-            baseProducts.forEach(product => {
-                html += `
-                    <div class="stock-item">
-                        <div class="stock-item-name">${product.name}</div>
-                        <div class="stock-item-value">${formatStockValue(product.stock)}</div>
-                        <div class="stock-item-unit">${product.unit}</div>
-                    </div>
-                `;
-            });
+            if (baseProducts.length === 0) {
+                html += '<div class="stock-item"><div class="stock-item-name">No hay productos</div></div>';
+            } else {
+                baseProducts.forEach(product => {
+                    html += `
+                        <div class="stock-item">
+                            <div class="stock-item-name">${product.name}</div>
+                            <div class="stock-item-value">${formatStockValue(product.stock)}</div>
+                            <div class="stock-item-unit">${product.unit}</div>
+                        </div>
+                    `;
+                });
+            }
             
             html += '<h3 style="margin-top: 20px;">Materiales</h3>';
             
-            supplies.forEach(supply => {
-                html += `
-                    <div class="stock-item">
-                        <div class="stock-item-name">${supply.name}</div>
-                        <div class="stock-item-value">${supply.stock}</div>
-                        <div class="stock-item-unit">${supply.unit}</div>
-                    </div>
-                `;
-            });
+            if (supplies.length === 0) {
+                html += '<div class="stock-item"><div class="stock-item-name">No hay insumos</div></div>';
+            } else {
+                supplies.forEach(supply => {
+                    html += `
+                        <div class="stock-item">
+                            <div class="stock-item-name">${supply.name}</div>
+                            <div class="stock-item-value">${supply.stock}</div>
+                            <div class="stock-item-unit">${supply.unit}</div>
+                        </div>
+                    `;
+                });
+            }
             
             container.innerHTML = html;
         }
@@ -1036,12 +1070,18 @@
                 const endpoints = ['getBaseProducts', 'getSupplies'];
                 for (const endpoint of endpoints) {
                     console.log(`🔍 Probando ${endpoint}...`);
-                    const response = await fetch(`${GAS_WEB_APP_URL}?action=${endpoint}`);
+                    const url = `${GAS_WEB_APP_URL}?action=${endpoint}&timestamp=${Date.now()}`;
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache'
+                    });
                     const result = await response.json();
                     console.log(`${endpoint}:`, response.status, result);
                     
                     if (result.success) {
-                        showNotification(`✅ ${endpoint}: OK (${result.products ? result.products.length : result.supplies ? result.supplies.length : 0} items)`, 'success');
+                        const count = result.products ? result.products.length : result.supplies ? result.supplies.length : 0;
+                        showNotification(`✅ ${endpoint}: OK (${count} items)`, 'success');
                     } else {
                         showNotification(`❌ ${endpoint}: ${result.message}`, 'error');
                     }
@@ -1136,24 +1176,24 @@
                 {
                     id: 'base-1',
                     name: 'Aceite de Lavanda',
-                    stock: 50, // 50 litros
+                    stock: 50,
                     unit: 'litros'
                 },
                 {
                     id: 'base-2', 
                     name: 'Crema de Caléndula',
-                    stock: 25, // 25 kg
+                    stock: 25,
                     unit: 'kg'
                 },
                 {
                     id: 'base-3',
                     name: 'Jabón de Miel',
-                    stock: 40, // 40 kg
+                    stock: 40,
                     unit: 'kg'
                 }
             ];
             
-            // Insumos (envases, tapas, etiquetas)
+            // Insumos
             supplies = [
                 { 
                     id: 'envase-45ml', 
@@ -1170,27 +1210,6 @@
                     forSizes: ['200ml']
                 },
                 { 
-                    id: 'envase-500ml', 
-                    name: 'Envase 500ml', 
-                    stock: 200, 
-                    unit: 'unidades',
-                    forSizes: ['500ml']
-                },
-                { 
-                    id: 'envase-1lts', 
-                    name: 'Envase 1L', 
-                    stock: 100, 
-                    unit: 'unidades',
-                    forSizes: ['1lts']
-                },
-                { 
-                    id: 'envase-5lts', 
-                    name: 'Envase 5L', 
-                    stock: 50, 
-                    unit: 'unidades',
-                    forSizes: ['5lts']
-                },
-                { 
                     id: 'tapa-45ml', 
                     name: 'Tapa 45ml', 
                     stock: 480, 
@@ -1201,20 +1220,6 @@
                     id: 'tapa-200ml', 
                     name: 'Tapa 200ml', 
                     stock: 290, 
-                    unit: 'unidades',
-                    forSizes: ['200ml']
-                },
-                { 
-                    id: 'etiqueta-45ml', 
-                    name: 'Etiqueta 45ml', 
-                    stock: 520, 
-                    unit: 'unidades',
-                    forSizes: ['45ml']
-                },
-                { 
-                    id: 'etiqueta-200ml', 
-                    name: 'Etiqueta 200ml', 
-                    stock: 310, 
                     unit: 'unidades',
                     forSizes: ['200ml']
                 }
