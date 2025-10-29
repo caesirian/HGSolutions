@@ -341,6 +341,26 @@
             background: #e9ecef;
         }
 
+        /* Diagnostic Button */
+        .diagnostic-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: var(--warning);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
         /* Notifications */
         .notification-system {
             position: fixed;
@@ -434,6 +454,11 @@
     </style>
 </head>
 <body>
+    <!-- Botón de diagnóstico -->
+    <button class="diagnostic-btn" onclick="runDiagnostic()" title="Diagnóstico">
+        <i class="fas fa-tools"></i>
+    </button>
+
     <div class="app-container">
         <!-- Header -->
         <header class="app-header" role="banner">
@@ -550,12 +575,9 @@
     </div>
 
     <script>
-        // IDs de Google Sheets
-        const STOCK_SHEET_ID = 'stockid';
-        const ORDERS_SHEET_ID = 'controlid';
-        
-        // URL de la Web App de Google Apps Script
+        // URLs de Google Apps Script y Sheets
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxoZJiZUa2Zk2lOzyNzmorl9ixHLX-S7iwo7zo82q9u364N8pCRi2ftCzyG0hiosi9o/exec';
+        const SPREADSHEET_ID = '1pfHRnK6rr24vVyIs0J5Onny6OJ25mRti4Af2vUAzFns';
 
         // Variables globales
         let baseProducts = [];
@@ -570,6 +592,8 @@
         // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🏭 Iniciando sistema de preparación...');
+            console.log('🔗 GAS URL:', GAS_WEB_APP_URL);
+            console.log('📊 Spreadsheet ID:', SPREADSHEET_ID);
             
             setupEventListeners();
             loadAllData();
@@ -597,48 +621,88 @@
             }
         }
 
-        // Cargar todos los datos
+        // Función mejorada para probar conexión
+        async function testConnection() {
+            try {
+                console.log('🔍 Probando conexión con GAS...');
+                
+                const testUrl = `${GAS_WEB_APP_URL}?action=testConnection`;
+                console.log('URL de prueba:', testUrl);
+                
+                const response = await fetch(testUrl);
+                console.log('Respuesta HTTP:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Respuesta JSON:', result);
+                
+                if (result.success) {
+                    showNotification('✅ Conexión exitosa con Google Apps Script', 'success');
+                    return true;
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('❌ Error de conexión:', error);
+                showNotification('❌ Error de conexión: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        // Función mejorada para cargar datos
         async function loadAllData() {
             try {
                 showLoading(true);
                 
-                // Cargar productos base
+                // Primero probar conexión
+                const isConnected = await testConnection();
+                if (!isConnected) {
+                    throw new Error('No se pudo establecer conexión con el servidor');
+                }
+                
+                console.log('📥 Cargando productos base...');
                 await loadBaseProducts();
                 
-                // Cargar insumos
+                console.log('📥 Cargando insumos...');
                 await loadSupplies();
                 
                 updateStatus('Conectado', 'success');
                 showNotification('✅ Sistema cargado correctamente', 'success');
+                
             } catch (error) {
                 console.error('Error cargando datos:', error);
                 updateStatus('Sin conexión', 'error');
                 showNotification('❌ Error cargando datos: ' + error.message, 'error');
                 
                 // Cargar datos de ejemplo
+                console.log('🔄 Cargando datos de ejemplo...');
                 loadSampleData();
             } finally {
                 showLoading(false);
             }
         }
 
-        // Cargar productos base
+        // Función mejorada para cargar productos base
         async function loadBaseProducts() {
             try {
                 const response = await fetch(`${GAS_WEB_APP_URL}?action=getBaseProducts`);
                 
                 if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
                 }
                 
                 const result = await response.json();
+                console.log('Productos base recibidos:', result);
                 
                 if (result.success) {
                     baseProducts = result.products || [];
                     renderBaseProducts();
                     renderStockPanel();
                 } else {
-                    throw new Error(result.message || 'Error desconocido');
+                    throw new Error(result.message || 'Error desconocido al cargar productos');
                 }
             } catch (error) {
                 console.error('Error cargando productos base:', error);
@@ -646,22 +710,23 @@
             }
         }
 
-        // Cargar insumos
+        // Función mejorada para cargar insumos
         async function loadSupplies() {
             try {
                 const response = await fetch(`${GAS_WEB_APP_URL}?action=getSupplies`);
                 
                 if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
                 }
                 
                 const result = await response.json();
+                console.log('Insumos recibidos:', result);
                 
                 if (result.success) {
                     supplies = result.supplies || [];
                     renderRealTimeStock();
                 } else {
-                    throw new Error(result.message || 'Error desconocido');
+                    throw new Error(result.message || 'Error desconocido al cargar insumos');
                 }
             } catch (error) {
                 console.error('Error cargando insumos:', error);
@@ -832,14 +897,19 @@
                 
                 const preparationData = {
                     baseProductId: currentPreparation.baseProduct.id,
+                    baseProductName: currentPreparation.baseProduct.name,
                     containerSize: currentPreparation.containerSize,
                     quantity: currentPreparation.quantity,
                     baseProductConsumption: totalBaseConsumption,
                     supplies: currentPreparation.requiredSupplies.map(s => ({
                         id: s.id,
-                        consumed: s.required
+                        name: s.name,
+                        consumed: s.required,
+                        unitPrice: s.unitPrice || 0
                     }))
                 };
+                
+                console.log('📤 Enviando datos de preparación:', preparationData);
                 
                 const response = await fetch(`${GAS_WEB_APP_URL}?action=confirmPreparation`, {
                     method: 'POST',
@@ -854,6 +924,7 @@
                 }
                 
                 const result = await response.json();
+                console.log('📥 Respuesta de confirmación:', result);
                 
                 if (result.success) {
                     showNotification('✅ Preparación confirmada - Stock actualizado', 'success');
@@ -949,6 +1020,38 @@
             container.innerHTML = html;
         }
 
+        // Función de diagnóstico
+        async function runDiagnostic() {
+            console.log('🩺 Iniciando diagnóstico...');
+            
+            // 1. Verificar URL
+            console.log('🔗 GAS_WEB_APP_URL:', GAS_WEB_APP_URL);
+            console.log('📊 SPREADSHEET_ID:', SPREADSHEET_ID);
+            
+            // 2. Probar conexión básica
+            await testConnection();
+            
+            // 3. Probar endpoints específicos
+            try {
+                const endpoints = ['getBaseProducts', 'getSupplies'];
+                for (const endpoint of endpoints) {
+                    console.log(`🔍 Probando ${endpoint}...`);
+                    const response = await fetch(`${GAS_WEB_APP_URL}?action=${endpoint}`);
+                    const result = await response.json();
+                    console.log(`${endpoint}:`, response.status, result);
+                    
+                    if (result.success) {
+                        showNotification(`✅ ${endpoint}: OK (${result.products ? result.products.length : result.supplies ? result.supplies.length : 0} items)`, 'success');
+                    } else {
+                        showNotification(`❌ ${endpoint}: ${result.message}`, 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error en diagnóstico:', error);
+                showNotification('❌ Error en diagnóstico: ' + error.message, 'error');
+            }
+        }
+
         // Funciones auxiliares
         function parseContainerSize(size) {
             const sizeMap = {
@@ -972,11 +1075,11 @@
 
         function formatStock(stock, unit) {
             if (unit === 'litros' && stock >= 1) {
-                return `${stock} L`;
+                return `${stock.toFixed(2)} L`;
             } else if (unit === 'litros') {
                 return `${(stock * 1000).toFixed(0)} ml`;
             } else if (unit === 'kg' && stock >= 1) {
-                return `${stock} kg`;
+                return `${stock.toFixed(2)} kg`;
             } else if (unit === 'kg') {
                 return `${(stock * 1000).toFixed(0)} g`;
             }
@@ -1126,6 +1229,7 @@
 
         // Funciones globales
         window.confirmPreparation = confirmPreparation;
+        window.runDiagnostic = runDiagnostic;
     </script>
 </body>
 </html>
