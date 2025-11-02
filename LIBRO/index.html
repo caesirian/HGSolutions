@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Financiero - Acceso Restringido</title>
+    <title>Dashboard Financiero - Agroecológico</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary: #2e7d32;
@@ -20,235 +19,158 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: #f8f9fa;
+            padding-top: 20px;
         }
         
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
-            max-width: 450px;
-            width: 90%;
-            text-align: center;
-        }
-        
-        .dashboard-container {
-            display: none;
-            width: 100%;
-        }
-        
-        .logo {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-        
-        .login-title {
-            color: var(--dark);
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .login-subtitle {
-            color: #6c757d;
-            margin-bottom: 30px;
-        }
-        
-        .g_id_signin {
-            width: 100%;
-            margin: 20px 0;
-        }
-        
-        .user-info {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 15px;
-            margin: 20px 0;
-            color: white;
-        }
-        
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 3px solid white;
-            margin: 0 auto 15px;
-        }
-        
-        .access-denied {
-            background: #dc3545;
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-        }
-        
-        /* Estilos del dashboard (los mismos de antes) */
         .dashboard-card {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            margin-bottom: 24px;
-            padding: 24px;
-            transition: all 0.3s ease;
-            border-left: 6px solid var(--primary);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
         }
         
         .stat-number {
-            font-size: 2.2rem;
-            font-weight: 800;
+            font-size: 1.8rem;
+            font-weight: 700;
             color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .chart-container {
             position: relative;
-            height: 320px;
+            height: 300px;
             width: 100%;
+        }
+        
+        .positive {
+            color: #28a745;
+        }
+        
+        .negative {
+            color: #dc3545;
         }
         
         .navbar-custom {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 16px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
         
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 20px;
             color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 250px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .dashboard-card {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Contenedor de Login -->
-    <div id="login-container" class="login-container">
-        <div class="logo">
-            <i class="fas fa-seedling"></i>
-        </div>
-        <h2 class="login-title">Dashboard Agroecológico</h2>
-        <p class="login-subtitle">Acceso restringido al propietario</p>
-        
-        <div id="google-login-button" class="g_id_signin"
-            data-type="standard"
-            data-theme="filled_blue"
-            data-text="signin_with"
-            data-shape="pill"
-            data-logo_alignment="left"
-            data-width="300">
-        </div>
-        
-        <div id="user-info" class="user-info" style="display: none;">
-            <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
-            <h5 id="user-name" class="mb-2"></h5>
-            <p id="user-email" class="mb-0"></p>
-        </div>
-        
-        <div id="access-denied" class="access-denied" style="display: none;">
-            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
-            <h5>Acceso Denegado</h5>
-            <p class="mb-0">Solo el propietario del archivo puede acceder a este dashboard.</p>
-        </div>
-        
-        <div class="mt-4">
-            <small class="text-muted">
-                <i class="fas fa-shield-alt me-1"></i>
-                Tus datos están protegidos y no se comparten con terceros
-            </small>
-        </div>
-    </div>
-
-    <!-- Contenedor del Dashboard (oculto inicialmente) -->
-    <div id="dashboard-container" class="dashboard-container container-fluid">
+    <div class="container-fluid">
         <!-- Header -->
-        <div class="navbar-custom text-white p-4">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h3 class="mb-2"><i class="fas fa-seedling me-2"></i>Dashboard Agroecológico</h3>
-                    <p class="mb-0 opacity-75">Acceso autorizado - <span id="authorized-user"></span></p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <span class="kpi-badge me-2">
-                        <i class="fas fa-sync-alt me-1"></i>
-                        <span id="update-text">Actualizando...</span>
-                    </span>
-                    <button class="btn btn-light btn-sm me-2" onclick="refreshDashboard()">
-                        <i class="fas fa-sync-alt me-1"></i>Actualizar
-                    </button>
-                    <button class="btn btn-outline-light btn-sm" onclick="logout()">
-                        <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
-                    </button>
-                </div>
+        <div class="navbar-custom text-white p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-seedling me-2"></i>Dashboard Agroecológico</h4>
+                <span id="last-update" class="badge bg-light text-dark">Actualizando...</span>
             </div>
         </div>
 
         <!-- Filtros -->
         <div class="filter-section">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">📅 Periodo</label>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Mes</label>
                     <select id="month-filter" class="form-select">
                         <option value="all">Todos los meses</option>
-                        <option value="7">Julio 2025</option>
-                        <option value="8">Agosto 2025</option>
-                        <option value="9">Septiembre 2025</option>
-                        <option value="10">Octubre 2025</option>
-                        <option value="11">Noviembre 2025</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">🏢 Proyecto</label>
+                <div class="col-md-4">
+                    <label class="form-label">Proyecto</label>
                     <select id="project-filter" class="form-select">
                         <option value="all">Todos los proyectos</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">📊 Tipo</label>
+                <div class="col-md-4">
+                    <label class="form-label">Tipo</label>
                     <select id="type-filter" class="form-select">
                         <option value="all">Todos los tipos</option>
                         <option value="Ingreso">Ingresos</option>
                         <option value="Egreso">Egresos</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-primary w-100" onclick="updateDashboard()">
-                        <i class="fas fa-filter me-2"></i>Aplicar Filtros
-                    </button>
-                </div>
             </div>
         </div>
 
-        <!-- KPIs -->
+        <!-- Estadísticas rápidas -->
         <div class="row g-3 mb-4">
             <div class="col-md-3 col-sm-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-balance-scale"></i> Balance Total</div>
+                    <div class="card-title">Balance Total</div>
                     <div class="stat-number" id="total-balance">$0</div>
-                    <div class="stat-label">Acumulado General</div>
+                    <div class="stat-label">Acumulado</div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-arrow-up"></i> Ingresos Totales</div>
-                    <div class="stat-number" id="total-income">$0</div>
+                    <div class="card-title">Ingresos Totales</div>
+                    <div class="stat-number positive" id="total-income">$0</div>
                     <div class="stat-label">Periodo actual</div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-arrow-down"></i> Egresos Totales</div>
-                    <div class="stat-number" id="total-expenses">$0</div>
+                    <div class="card-title">Egresos Totales</div>
+                    <div class="stat-number negative" id="total-expenses">$0</div>
                     <div class="stat-label">Periodo actual</div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-chart-line"></i> Ventas Totales</div>
+                    <div class="card-title">Ventas Totales</div>
                     <div class="stat-number" id="total-sales">$0</div>
                     <div class="stat-label">Registro diario</div>
                 </div>
@@ -259,7 +181,7 @@
         <div class="row g-3">
             <div class="col-lg-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-chart-bar"></i> Balance Mensual</div>
+                    <div class="card-title">Balance Mensual</div>
                     <div class="chart-container">
                         <canvas id="balanceChart"></canvas>
                     </div>
@@ -267,7 +189,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-chart-pie"></i> Ingresos vs Egresos</div>
+                    <div class="card-title">Ingresos vs Egresos</div>
                     <div class="chart-container">
                         <canvas id="incomeExpenseChart"></canvas>
                     </div>
@@ -275,7 +197,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-tags"></i> Ventas por Categoría</div>
+                    <div class="card-title">Ventas por Categoría</div>
                     <div class="chart-container">
                         <canvas id="salesCategoryChart"></canvas>
                     </div>
@@ -283,7 +205,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="dashboard-card">
-                    <div class="card-title"><i class="fas fa-project-diagram"></i> Transacciones por Proyecto</div>
+                    <div class="card-title">Transacciones por Proyecto</div>
                     <div class="chart-container">
                         <canvas id="projectChart"></canvas>
                     </div>
@@ -291,14 +213,17 @@
             </div>
         </div>
 
-        <!-- Tabla de transacciones -->
+        <!-- Tabla de transacciones recientes -->
         <div class="dashboard-card mt-4">
             <div class="card-title d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-list-alt"></i> Transacciones Recientes</span>
+                <span>Transacciones Recientes</span>
+                <button class="btn btn-sm btn-outline-primary" id="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover" id="transactions-table">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>Fecha</th>
                             <th>Tipo</th>
@@ -315,27 +240,19 @@
         </div>
 
         <div class="loading" id="loading-indicator">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Cargando datos...</span>
             </div>
-            <p class="mt-3">Cargando datos financieros en tiempo real...</p>
+            <p class="mt-2">Cargando datos financieros...</p>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN - REEMPLAZA CON TUS DATOS
-        const CONFIG = {
-            SHEET_ID: '15OBpWVzSX-jXXX99k1T9iZZtIoIj-appiH45w3BSBDY',
-            // Agrega aquí el email del propietario autorizado
-            AUTHORIZED_OWNER: 'hernan.garbarino@gmail.com', // REEMPLAZA CON TU EMAIL
-            // Opcional: Configuración de Google OAuth (Client ID)
-            // CLIENT_ID: 'tu_client_id.apps.googleusercontent.com'
-        };
-
-        // URLs de las hojas
-        const FINANZAS_MENSUAL_URL = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Finanzas_Mensual`;
-        const FINANZAS_REGISTRO_URL = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Finanzas_RegistroDiario`;
-        const VENTAS_REGISTRO_URL = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Ventas_RegistroDiario`;
+        // Configuración
+        const SHEET_ID = '15OBpWVzSX-jXXX99k1T9iZZtIoIj-appiH45w3BSBDY';
+        const FINANZAS_MENSUAL_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Finanzas_Mensual`;
+        const FINANZAS_REGISTRO_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Finanzas_RegistroDiario`;
+        const VENTAS_REGISTRO_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Ventas_RegistroDiario`;
 
         // Variables globales
         let financialData = {
@@ -345,200 +262,81 @@
         };
 
         let charts = {};
-        let currentUser = null;
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
-            initializeGoogleAuth();
-            checkExistingSession();
+            loadAllData();
+            setupEventListeners();
         });
 
-        // Inicializar autenticación de Google
-        function initializeGoogleAuth() {
-            window.google.accounts.id.initialize({
-                // client_id: CONFIG.CLIENT_ID, // Descomenta si usas Client ID específico
-                callback: handleCredentialResponse,
-                auto_select: false,
-                cancel_on_tap_outside: false
-            });
-
-            window.google.accounts.id.renderButton(
-                document.getElementById('google-login-button'),
-                { theme: "filled_blue", size: "large", width: 300 }
-            );
-        }
-
-        // Manejar respuesta de autenticación
-        function handleCredentialResponse(response) {
-            const responsePayload = parseJwt(response.credential);
-            
-            currentUser = {
-                name: responsePayload.name,
-                email: responsePayload.email,
-                picture: responsePayload.picture
-            };
-
-            showUserInfo(currentUser);
-            verifyAccess();
-        }
-
-        // Verificar acceso del usuario
-        function verifyAccess() {
-            if (currentUser.email === CONFIG.AUTHORIZED_OWNER) {
-                grantAccess();
-            } else {
-                denyAccess();
-            }
-        }
-
-        // Otorgar acceso
-        function grantAccess() {
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('dashboard-container').style.display = 'block';
-            document.getElementById('authorized-user').textContent = currentUser.email;
-            
-            // Inicializar dashboard
-            initializeDashboard();
-        }
-
-        // Denegar acceso
-        function denyAccess() {
-            document.getElementById('user-info').style.display = 'none';
-            document.getElementById('access-denied').style.display = 'block';
-            document.getElementById('google-login-button').style.display = 'none';
-            
-            // Limpiar sesión
-            currentUser = null;
-            localStorage.removeItem('google_auth');
-        }
-
-        // Mostrar información del usuario
-        function showUserInfo(user) {
-            document.getElementById('user-name').textContent = user.name;
-            document.getElementById('user-email').textContent = user.email;
-            document.getElementById('user-avatar').src = user.picture;
-            document.getElementById('user-info').style.display = 'block';
-        }
-
-        // Verificar sesión existente
-        function checkExistingSession() {
-            const savedAuth = localStorage.getItem('google_auth');
-            if (savedAuth) {
-                try {
-                    const authData = JSON.parse(savedAuth);
-                    if (authData.expires > Date.now()) {
-                        currentUser = authData.user;
-                        showUserInfo(currentUser);
-                        verifyAccess();
-                    } else {
-                        localStorage.removeItem('google_auth');
-                    }
-                } catch (e) {
-                    localStorage.removeItem('google_auth');
-                }
-            }
-        }
-
-        // Cerrar sesión
-        function logout() {
-            currentUser = null;
-            localStorage.removeItem('google_auth');
-            
-            // Google Sign-Out
-            google.accounts.id.disableAutoSelect();
-            
-            // Mostrar login
-            document.getElementById('dashboard-container').style.display = 'none';
-            document.getElementById('login-container').style.display = 'flex';
-            document.getElementById('user-info').style.display = 'none';
-            document.getElementById('access-denied').style.display = 'none';
-            document.getElementById('google-login-button').style.display = 'block';
-        }
-
-        // Guardar sesión
-        function saveSession() {
-            if (currentUser) {
-                const authData = {
-                    user: currentUser,
-                    expires: Date.now() + (24 * 60 * 60 * 1000) // 24 horas
-                };
-                localStorage.setItem('google_auth', JSON.stringify(authData));
-            }
-        }
-
-        // Parse JWT token
-        function parseJwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                console.error('Error parsing JWT:', e);
-                return {};
-            }
-        }
-
-        // ============================================
-        // FUNCIONALIDAD DEL DASHBOARD (igual que antes)
-        // ============================================
-
-        async function initializeDashboard() {
-            showLoading(true);
-            await loadAllData();
-            setupEventListeners();
-            showLoading(false);
-            saveSession();
-        }
-
+        // Configurar event listeners
         function setupEventListeners() {
+            document.getElementById('refresh-btn').addEventListener('click', loadAllData);
             document.getElementById('month-filter').addEventListener('change', updateDashboard);
             document.getElementById('project-filter').addEventListener('change', updateDashboard);
             document.getElementById('type-filter').addEventListener('change', updateDashboard);
         }
 
+        // Cargar todos los datos
         async function loadAllData() {
+            showLoading(true);
+            
             try {
                 await Promise.all([
                     loadFinancialMonthlyData(),
                     loadFinancialDailyData(),
                     loadSalesData()
                 ]);
-                document.getElementById('update-text').textContent = new Date().toLocaleTimeString();
+                
+                updateDashboard();
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
             } catch (error) {
                 console.error('Error cargando datos:', error);
-                showNotification('Error al cargar los datos', 'error');
+                alert('Error al cargar los datos. Verifica la conexión.');
+            } finally {
+                showLoading(false);
             }
         }
 
+        // Función para parsear correctamente los números del formato argentino
         function parseArgentineNumber(str) {
             if (!str || str === '') return 0;
+            
+            // Remover caracteres no numéricos excepto comas, puntos y signos negativos
             let cleaned = str.toString().replace(/[^\d,-]/g, '');
+            
+            // Si tiene coma como separador decimal (formato argentino)
             if (cleaned.includes(',') && !cleaned.includes('.')) {
+                // Reemplazar coma por punto para parseFloat
                 cleaned = cleaned.replace(',', '.');
-            } else if (cleaned.includes(',') && cleaned.includes('.')) {
+            }
+            // Si tiene ambos, asumir que la coma es decimal y el punto es de miles
+            else if (cleaned.includes(',') && cleaned.includes('.')) {
+                // Eliminar puntos de miles y luego reemplazar coma por punto
                 cleaned = cleaned.replace(/\./g, '').replace(',', '.');
             }
+            
             const result = parseFloat(cleaned);
             return isNaN(result) ? 0 : result;
         }
 
+        // Función para extraer el mes de una fecha
         function extractMonthFromDate(dateString) {
             try {
                 const date = new Date(dateString);
-                return date.getMonth() + 1;
+                return date.getMonth() + 1; // getMonth() devuelve 0-11, sumamos 1 para 1-12
             } catch (e) {
                 return 0;
             }
         }
 
+        // Cargar datos financieros mensuales
         async function loadFinancialMonthlyData() {
             return new Promise((resolve, reject) => {
                 Papa.parse(FINANZAS_MENSUAL_URL, {
-                    download: true, header: true, skipEmptyLines: true,
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
                     complete: function(results) {
                         financialData.monthly = results.data
                             .filter(row => row.Mes && !isNaN(parseArgentineNumber(row.Mes)))
@@ -550,15 +348,21 @@
                                 Balance: parseArgentineNumber(row.Balance)
                             }));
                         resolve();
-                    }, error: reject
+                    },
+                    error: function(error) {
+                        reject(error);
+                    }
                 });
             });
         }
 
+        // Cargar datos financieros diarios
         async function loadFinancialDailyData() {
             return new Promise((resolve, reject) => {
                 Papa.parse(FINANZAS_REGISTRO_URL, {
-                    download: true, header: true, skipEmptyLines: true,
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
                     complete: function(results) {
                         financialData.daily = results.data
                             .filter(row => row.Fecha && row.Monto)
@@ -568,15 +372,21 @@
                                 Mes: parseArgentineNumber(row.Mes)
                             }));
                         resolve();
-                    }, error: reject
+                    },
+                    error: function(error) {
+                        reject(error);
+                    }
                 });
             });
         }
 
+        // Cargar datos de ventas
         async function loadSalesData() {
             return new Promise((resolve, reject) => {
                 Papa.parse(VENTAS_REGISTRO_URL, {
-                    download: true, header: true, skipEmptyLines: true,
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
                     complete: function(results) {
                         financialData.sales = results.data
                             .filter(row => row.Fecha && row.Total)
@@ -585,14 +395,19 @@
                                 Total: parseArgentineNumber(row.Total),
                                 'Precio Unitario': parseArgentineNumber(row['Precio Unitario']),
                                 Cantidad: parseArgentineNumber(row.Cantidad),
+                                // Extraer el mes de la fecha para filtrar después
                                 Mes: extractMonthFromDate(row.Fecha)
                             }));
                         resolve();
-                    }, error: reject
+                    },
+                    error: function(error) {
+                        reject(error);
+                    }
                 });
             });
         }
 
+        // Actualizar todo el dashboard
         function updateDashboard() {
             updateQuickStats();
             updateCharts();
@@ -600,14 +415,17 @@
             updateProjectFilter();
         }
 
+        // Actualizar estadísticas rápidas
         function updateQuickStats() {
             const monthFilter = document.getElementById('month-filter').value;
             
+            // Calcular totales
             let totalBalance = 0;
             let totalIncome = 0;
             let totalExpenses = 0;
             let totalSales = 0;
 
+            // Datos mensuales
             financialData.monthly.forEach(row => {
                 if (monthFilter === 'all' || row.Mes == monthFilter) {
                     totalBalance += row.Balance || 0;
@@ -616,18 +434,35 @@
                 }
             });
 
+            // Datos de ventas - filtrado por mes
             financialData.sales.forEach(row => {
                 if (monthFilter === 'all' || row.Mes == monthFilter) {
                     totalSales += row.Total || 0;
                 }
             });
 
+            // Datos diarios (como respaldo)
+            if (totalIncome === 0 && totalExpenses === 0) {
+                financialData.daily.forEach(row => {
+                    if (monthFilter === 'all' || row.Mes == monthFilter) {
+                        if (row['Tipo (Ingreso/Egreso)'] === 'Ingreso') {
+                            totalIncome += row.Monto || 0;
+                        } else if (row['Tipo (Ingreso/Egreso)'] === 'Egreso') {
+                            totalExpenses += row.Monto || 0;
+                        }
+                    }
+                });
+                totalBalance = totalIncome - totalExpenses;
+            }
+
+            // Actualizar UI
             document.getElementById('total-balance').textContent = formatCurrency(totalBalance);
             document.getElementById('total-income').textContent = formatCurrency(totalIncome);
             document.getElementById('total-expenses').textContent = formatCurrency(totalExpenses);
             document.getElementById('total-sales').textContent = formatCurrency(totalSales);
         }
 
+        // Actualizar gráficos
         function updateCharts() {
             updateBalanceChart();
             updateIncomeExpenseChart();
@@ -635,44 +470,139 @@
             updateProjectChart();
         }
 
+        // Gráfico de balance mensual
         function updateBalanceChart() {
             const ctx = document.getElementById('balanceChart').getContext('2d');
             const months = financialData.monthly.map(row => `Mes ${row.Mes}`);
             const balances = financialData.monthly.map(row => row.Balance || 0);
 
-            if (charts.balanceChart) charts.balanceChart.destroy();
+            if (charts.balanceChart) {
+                charts.balanceChart.destroy();
+            }
 
             charts.balanceChart = new Chart(ctx, {
-                type: 'line', data: { labels: months, datasets: [{
-                    label: 'Balance', data: balances, borderColor: '#2e7d32',
-                    backgroundColor: 'rgba(46, 125, 50, 0.1)', borderWidth: 2, fill: true, tension: 0.4
-                }]}, options: { responsive: true, maintainAspectRatio: false }
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Balance',
+                        data: balances,
+                        borderColor: '#2e7d32',
+                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
             });
         }
 
+        // Gráfico de ingresos vs egresos
         function updateIncomeExpenseChart() {
             const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
             const months = financialData.monthly.map(row => `Mes ${row.Mes}`);
             const incomes = financialData.monthly.map(row => row['Total Ingresos'] || 0);
             const expenses = financialData.monthly.map(row => row['Total Egresos'] || 0);
 
-            if (charts.incomeExpenseChart) charts.incomeExpenseChart.destroy();
+            // Si no hay datos en monthly, usar datos diarios agrupados por mes
+            if (incomes.every(val => val === 0)) {
+                const monthlyData = {};
+                financialData.daily.forEach(row => {
+                    const mes = row.Mes;
+                    if (!monthlyData[mes]) {
+                        monthlyData[mes] = { ingresos: 0, egresos: 0 };
+                    }
+                    if (row['Tipo (Ingreso/Egreso)'] === 'Ingreso') {
+                        monthlyData[mes].ingresos += row.Monto || 0;
+                    } else if (row['Tipo (Ingreso/Egreso)'] === 'Egreso') {
+                        monthlyData[mes].egresos += row.Monto || 0;
+                    }
+                });
+
+                const sortedMonths = Object.keys(monthlyData).sort();
+                months.splice(0, months.length, ...sortedMonths.map(m => `Mes ${m}`));
+                incomes.splice(0, incomes.length, ...sortedMonths.map(m => monthlyData[m].ingresos));
+                expenses.splice(0, expenses.length, ...sortedMonths.map(m => monthlyData[m].egresos));
+            }
+
+            if (charts.incomeExpenseChart) {
+                charts.incomeExpenseChart.destroy();
+            }
 
             charts.incomeExpenseChart = new Chart(ctx, {
-                type: 'bar', data: { labels: months, datasets: [
-                    { label: 'Ingresos', data: incomes, backgroundColor: '#28a745' },
-                    { label: 'Egresos', data: expenses, backgroundColor: '#dc3545' }
-                ]}, options: { responsive: true, maintainAspectRatio: false }
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Ingresos',
+                            data: incomes,
+                            backgroundColor: '#28a745',
+                            borderColor: '#28a745',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Egresos',
+                            data: expenses,
+                            backgroundColor: '#dc3545',
+                            borderColor: '#dc3545',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
             });
         }
 
+        // Gráfico de ventas por categoría - CORREGIDO
         function updateSalesCategoryChart() {
             const ctx = document.getElementById('salesCategoryChart').getContext('2d');
             const monthFilter = document.getElementById('month-filter').value;
             
+            // Agrupar ventas por categoría FILTRANDO POR MES
             const categories = {};
             financialData.sales.forEach(row => {
+                // Filtrar por mes seleccionado
                 if (monthFilter === 'all' || row.Mes == monthFilter) {
+                    // Usar la categoría real de la hoja de ventas
                     const category = row.Categoría || 'Sin categoría';
                     const total = row.Total || 0;
                     categories[category] = (categories[category] || 0) + total;
@@ -682,21 +612,62 @@
             const labels = Object.keys(categories);
             const data = Object.values(categories);
 
-            if (charts.salesCategoryChart) charts.salesCategoryChart.destroy();
+            // Si no hay datos, mostrar mensaje
+            if (labels.length === 0 || data.every(val => val === 0)) {
+                labels.push('Sin datos');
+                data.push(1);
+            }
+
+            if (charts.salesCategoryChart) {
+                charts.salesCategoryChart.destroy();
+            }
 
             charts.salesCategoryChart = new Chart(ctx, {
-                type: 'doughnut', data: { labels, datasets: [{
-                    data, backgroundColor: ['#2e7d32', '#558b2f', '#7cb342', '#aed581', '#c5e1a5']
-                }]}, options: { responsive: true, maintainAspectRatio: false }
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#2e7d32', '#558b2f', '#7cb342', '#aed581',
+                            '#c5e1a5', '#e8f5e8', '#1b5e20', '#388e3c'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        // Mostrar el total en el centro del donut
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
             });
         }
 
+        // Gráfico de transacciones por proyecto
         function updateProjectChart() {
             const ctx = document.getElementById('projectChart').getContext('2d');
             const monthFilter = document.getElementById('month-filter').value;
             
+            // Agrupar transacciones por proyecto FILTRANDO POR MES
             const projects = {};
             financialData.daily.forEach(row => {
+                // Filtrar por mes seleccionado
                 if (monthFilter === 'all' || row.Mes == monthFilter) {
                     const project = row.Proyecto || 'Sin proyecto';
                     const amount = row.Monto || 0;
@@ -707,31 +678,67 @@
             const labels = Object.keys(projects);
             const data = Object.values(projects);
 
-            if (charts.projectChart) charts.projectChart.destroy();
+            if (charts.projectChart) {
+                charts.projectChart.destroy();
+            }
 
             charts.projectChart = new Chart(ctx, {
-                type: 'pie', data: { labels, datasets: [{
-                    data, backgroundColor: ['#2e7d32', '#558b2f', '#7cb342', '#aed581', '#c5e1a5']
-                }]}, options: { responsive: true, maintainAspectRatio: false }
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#2e7d32', '#558b2f', '#7cb342', '#aed581',
+                            '#c5e1a5', '#e8f5e8', '#1b5e20', '#388e3c'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
             });
         }
 
+        // Actualizar tabla de transacciones
         function updateTransactionsTable() {
             const tbody = document.getElementById('transactions-body');
             const typeFilter = document.getElementById('type-filter').value;
             const monthFilter = document.getElementById('month-filter').value;
             
+            // Filtrar por tipo Y por mes
             let filteredData = financialData.daily;
-            if (typeFilter !== 'all') filteredData = filteredData.filter(row => row['Tipo (Ingreso/Egreso)'] === typeFilter);
-            if (monthFilter !== 'all') filteredData = filteredData.filter(row => row.Mes == monthFilter);
             
-            const recentTransactions = filteredData.sort((a, b) => new Date(b.Fecha) - new Date(a.Fecha)).slice(0, 10);
+            if (typeFilter !== 'all') {
+                filteredData = filteredData.filter(row => 
+                    row['Tipo (Ingreso/Egreso)'] === typeFilter
+                );
+            }
+            
+            if (monthFilter !== 'all') {
+                filteredData = filteredData.filter(row => 
+                    row.Mes == monthFilter
+                );
+            }
+            
+            const recentTransactions = filteredData
+                .sort((a, b) => new Date(b.Fecha) - new Date(a.Fecha))
+                .slice(0, 10);
 
             tbody.innerHTML = '';
+
             recentTransactions.forEach(row => {
+                const tr = document.createElement('tr');
                 const type = row['Tipo (Ingreso/Egreso)'];
                 const amount = row.Monto || 0;
-                const tr = document.createElement('tr');
+                
                 tr.innerHTML = `
                     <td>${formatDate(row.Fecha)}</td>
                     <td><span class="badge ${type === 'Ingreso' ? 'bg-success' : 'bg-danger'}">${type}</span></td>
@@ -739,50 +746,73 @@
                     <td class="${type === 'Ingreso' ? 'positive' : 'negative'}">${formatCurrency(amount)}</td>
                     <td>${row.Proyecto || 'N/A'}</td>
                 `;
+                
                 tbody.appendChild(tr);
             });
         }
 
+        // Actualizar filtro de proyectos
         function updateProjectFilter() {
             const projectFilter = document.getElementById('project-filter');
             const projects = new Set();
-            financialData.daily.forEach(row => { if (row.Proyecto) projects.add(row.Proyecto); });
-            financialData.sales.forEach(row => { if (row.Proyecto) projects.add(row.Proyecto); });
             
-            while (projectFilter.children.length > 1) projectFilter.removeChild(projectFilter.lastChild);
+            financialData.daily.forEach(row => {
+                if (row.Proyecto) {
+                    projects.add(row.Proyecto);
+                }
+            });
+            
+            financialData.sales.forEach(row => {
+                if (row.Proyecto) {
+                    projects.add(row.Proyecto);
+                }
+            });
+            
+            // Mantener la opción "Todos" y limpiar las demás
+            while (projectFilter.children.length > 1) {
+                projectFilter.removeChild(projectFilter.lastChild);
+            }
+            
             projects.forEach(project => {
                 const option = document.createElement('option');
-                option.value = project; option.textContent = project;
+                option.value = project;
+                option.textContent = project;
                 projectFilter.appendChild(option);
             });
         }
 
-        function refreshDashboard() {
-            showLoading(true);
-            loadAllData().then(() => {
-                updateDashboard();
-                showLoading(false);
-            });
-        }
-
+        // Utilidades
         function formatCurrency(amount) {
             return new Intl.NumberFormat('es-AR', {
-                style: 'currency', currency: 'ARS', minimumFractionDigits: 2, maximumFractionDigits: 2
+                style: 'currency',
+                currency: 'ARS',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             }).format(amount);
         }
 
         function formatDate(dateString) {
-            try { return new Date(dateString).toLocaleDateString('es-AR'); } catch (e) { return dateString; }
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('es-AR');
+            } catch (e) {
+                return dateString;
+            }
         }
 
         function showLoading(show) {
-            document.getElementById('loading-indicator').style.display = show ? 'block' : 'none';
+            document.getElementById('loading-indicator').style.display = 
+                show ? 'block' : 'none';
         }
-
-        function showNotification(message, type) {
-            // Implementación básica de notificación
-            console.log(`${type}: ${message}`);
-        }
+    
+      google.script.run
+        .withSuccessHandler(data => {
+          document.getElementById('data').innerHTML = JSON.stringify(data);
+        })
+        .withFailureHandler(error => {
+          document.getElementById('data').innerHTML = "Error: " + error.message;
+        })
+        .getSheetData();
     </script>
 </body>
 </html>
