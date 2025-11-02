@@ -298,6 +298,28 @@
             }
         }
 
+        // Función para parsear correctamente los números del formato argentino
+        function parseArgentineNumber(str) {
+            if (!str || str === '') return 0;
+            
+            // Remover caracteres no numéricos excepto comas, puntos y signos negativos
+            let cleaned = str.toString().replace(/[^\d,-]/g, '');
+            
+            // Si tiene coma como separador decimal (formato argentino)
+            if (cleaned.includes(',') && !cleaned.includes('.')) {
+                // Reemplazar coma por punto para parseFloat
+                cleaned = cleaned.replace(',', '.');
+            }
+            // Si tiene ambos, asumir que la coma es decimal y el punto es de miles
+            else if (cleaned.includes(',') && cleaned.includes('.')) {
+                // Eliminar puntos de miles y luego reemplazar coma por punto
+                cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+            }
+            
+            const result = parseFloat(cleaned);
+            return isNaN(result) ? 0 : result;
+        }
+
         // Cargar datos financieros mensuales
         async function loadFinancialMonthlyData() {
             return new Promise((resolve, reject) => {
@@ -306,7 +328,15 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        financialData.monthly = results.data.filter(row => row.Mes && !isNaN(row.Mes));
+                        financialData.monthly = results.data
+                            .filter(row => row.Mes && !isNaN(parseArgentineNumber(row.Mes)))
+                            .map(row => ({
+                                ...row,
+                                Mes: parseArgentineNumber(row.Mes),
+                                'Total Ingresos': parseArgentineNumber(row['Total Ingresos']),
+                                'Total Egresos': parseArgentineNumber(row['Total Egresos']),
+                                Balance: parseArgentineNumber(row.Balance)
+                            }));
                         resolve();
                     },
                     error: function(error) {
@@ -324,7 +354,13 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        financialData.daily = results.data.filter(row => row.Fecha && row.Monto);
+                        financialData.daily = results.data
+                            .filter(row => row.Fecha && row.Monto)
+                            .map(row => ({
+                                ...row,
+                                Monto: parseArgentineNumber(row.Monto),
+                                Mes: parseArgentineNumber(row.Mes)
+                            }));
                         resolve();
                     },
                     error: function(error) {
@@ -342,7 +378,14 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        financialData.sales = results.data.filter(row => row.Fecha && row.Total);
+                        financialData.sales = results.data
+                            .filter(row => row.Fecha && row.Total)
+                            .map(row => ({
+                                ...row,
+                                Total: parseArgentineNumber(row.Total),
+                                'Precio Unitario': parseArgentineNumber(row['Precio Unitario']),
+                                Cantidad: parseArgentineNumber(row.Cantidad)
+                            }));
                         resolve();
                     },
                     error: function(error) {
@@ -372,21 +415,29 @@
 
             // Datos mensuales
             financialData.monthly.forEach(row => {
-                if (monthFilter === 'all' || row.Mes === monthFilter) {
-                    const balance = parseFloat(row.Balance) || 0;
-                    const income = parseFloat(row['Total Ingresos']) || 0;
-                    const expenses = parseFloat(row['Total Egresos']) || 0;
-                    
-                    totalBalance += balance;
-                    totalIncome += income;
-                    totalExpenses += expenses;
+                if (monthFilter === 'all' || row.Mes == monthFilter) {
+                    totalBalance += row.Balance || 0;
+                    totalIncome += row['Total Ingresos'] || 0;
+                    totalExpenses += row['Total Egresos'] || 0;
                 }
             });
 
             // Datos de ventas
             financialData.sales.forEach(row => {
-                totalSales += parseFloat(row.Total) || 0;
+                totalSales += row.Total || 0;
             });
+
+            // Datos diarios (como respaldo)
+            if (totalIncome === 0 && totalExpenses === 0) {
+                financialData.daily.forEach(row => {
+                    if (row['Tipo (Ingreso/Egreso)'] === 'Ingreso') {
+                        totalIncome += row.Monto || 0;
+                    } else if (row['Tipo (Ingreso/Egreso)'] === 'Egreso') {
+                        totalExpenses += row.Monto || 0;
+                    }
+                });
+                totalBalance = totalIncome - totalExpenses;
+            }
 
             // Actualizar UI
             document.getElementById('total-balance').textContent = formatCurrency(totalBalance);
@@ -407,7 +458,7 @@
         function updateBalanceChart() {
             const ctx = document.getElementById('balanceChart').getContext('2d');
             const months = financialData.monthly.map(row => `Mes ${row.Mes}`);
-            const balances = financialData.monthly.map(row => parseFloat(row.Balance) || 0);
+            const balances = financialData.monthly.map(row => row.Balance || 0);
 
             if (charts.balanceChart) {
                 charts.balanceChart.destroy();
@@ -456,8 +507,29 @@
         function updateIncomeExpenseChart() {
             const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
             const months = financialData.monthly.map(row => `Mes ${row.Mes}`);
-            const incomes = financialData.monthly.map(row => parseFloat(row['Total Ingresos']) || 0);
-            const expenses = financialData.monthly.map(row => parseFloat(row['Total Egresos']) || 0);
+            const incomes = financialData.monthly.map(row => row['Total Ingresos'] || 0);
+            const expenses = financialData.monthly.map(row => row['Total Egresos'] || 0);
+
+            // Si no hay datos en monthly, usar datos diarios agrupados por mes
+            if (incomes.every(val => val === 0)) {
+                const monthlyData = {};
+                financialData.daily.forEach(row => {
+                    const mes = row.Mes;
+                    if (!monthlyData[mes]) {
+                        monthlyData[mes] = { ingresos: 0, egresos: 0 };
+                    }
+                    if (row['Tipo (Ingreso/Egreso)'] === 'Ingreso') {
+                        monthlyData[mes].ingresos += row.Monto || 0;
+                    } else if (row['Tipo (Ingreso/Egreso)'] === 'Egreso') {
+                        monthlyData[mes].egresos += row.Monto || 0;
+                    }
+                });
+
+                const sortedMonths = Object.keys(monthlyData).sort();
+                months.splice(0, months.length, ...sortedMonths.map(m => `Mes ${m}`));
+                incomes.splice(0, incomes.length, ...sortedMonths.map(m => monthlyData[m].ingresos));
+                expenses.splice(0, expenses.length, ...sortedMonths.map(m => monthlyData[m].egresos));
+            }
 
             if (charts.incomeExpenseChart) {
                 charts.incomeExpenseChart.destroy();
@@ -512,7 +584,7 @@
             const categories = {};
             financialData.sales.forEach(row => {
                 const category = row.Categoría || 'Sin categoría';
-                const total = parseFloat(row.Total) || 0;
+                const total = row.Total || 0;
                 categories[category] = (categories[category] || 0) + total;
             });
 
@@ -556,7 +628,7 @@
             const projects = {};
             financialData.daily.forEach(row => {
                 const project = row.Proyecto || 'Sin proyecto';
-                const amount = parseFloat(row.Monto) || 0;
+                const amount = row.Monto || 0;
                 projects[project] = (projects[project] || 0) + amount;
             });
 
@@ -615,7 +687,7 @@
             recentTransactions.forEach(row => {
                 const tr = document.createElement('tr');
                 const type = row['Tipo (Ingreso/Egreso)'];
-                const amount = parseFloat(row.Monto) || 0;
+                const amount = row.Monto || 0;
                 
                 tr.innerHTML = `
                     <td>${formatDate(row.Fecha)}</td>
@@ -640,6 +712,12 @@
                 }
             });
             
+            financialData.sales.forEach(row => {
+                if (row.Proyecto) {
+                    projects.add(row.Proyecto);
+                }
+            });
+            
             // Mantener la opción "Todos" y limpiar las demás
             while (projectFilter.children.length > 1) {
                 projectFilter.removeChild(projectFilter.lastChild);
@@ -657,13 +735,19 @@
         function formatCurrency(amount) {
             return new Intl.NumberFormat('es-AR', {
                 style: 'currency',
-                currency: 'ARS'
+                currency: 'ARS',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             }).format(amount);
         }
 
         function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('es-AR');
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('es-AR');
+            } catch (e) {
+                return dateString;
+            }
         }
 
         function showLoading(show) {
